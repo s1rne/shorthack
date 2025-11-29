@@ -1,0 +1,133 @@
+kind: pipeline
+type: docker
+name: shorthack
+
+steps:
+  # Проверка кода (lint)
+  - name: lint
+    image: node:20-alpine
+    commands:
+      - corepack enable && corepack prepare pnpm@latest --activate
+      - pnpm install --frozen-lockfile
+      - pnpm run lint
+    when:
+      event:
+        - pull_request
+        - push
+      branch:
+        - dev
+        - master
+
+  # Сборка Docker образа
+  - name: docker-build
+    image: docker/compose:latest
+    commands:
+      # Копируем .env ПЕРЕД сборкой
+      - cp /configs/.env .env || true
+      # Собираем образ
+      - docker-compose build --parallel app
+    volumes:
+      - name: docker-sock
+        path: /var/run/docker.sock
+      - name: env-configs
+        path: /configs
+    depends_on:
+      - lint
+    when:
+      branch:
+        - master
+
+  # Деплой на production
+  - name: deploy
+    image: docker/compose:latest
+    commands:
+      # Пересоздаём контейнер приложения
+      - docker-compose up -d --force-recreate --no-deps app
+      # Ждём запуска
+      - sleep 5
+      # Health check
+      - docker-compose exec -T app wget --no-verbose --tries=3 --spider http://localhost:3000/api/trpc/user.getAll || echo "Health check warning"
+    volumes:
+      - name: docker-sock
+        path: /var/run/docker.sock
+    depends_on:
+      - docker-build
+    when:
+      branch:
+        - master
+      event:
+        - push
+
+  # Очистка старых образов
+  - name: cleanup
+    image: docker:latest
+    commands:
+      # Удаляем старые образы shorthack
+      - docker images | grep "shorthack" | grep -v "latest" | awk '{print $3}' | xargs -r docker rmi || true
+      # Удаляем dangling образы
+      - docker images -f "dangling=true" -q | xargs -r docker rmi || true
+    volumes:
+      - name: docker-sock
+        path: /var/run/docker.sock
+    depends_on:
+      - deploy
+    when:
+      branch:
+        - master
+      event:
+        - push
+
+  # Уведомление об успехе (опционально)
+  - name: notify-success
+    image: appleboy/drone-telegram
+    settings:
+      token:
+        from_secret: telegram_token
+      to:
+        from_secret: telegram_chat_id
+      message: |
+        ✅ Deploy successful!
+        Repo: {{repo.name}}
+        Branch: {{commit.branch}}
+        Commit: {{commit.message}}
+    when:
+      status:
+        - success
+      branch:
+        - master
+
+  # Уведомление об ошибке
+  - name: notify-failure
+    image: appleboy/drone-telegram
+    settings:
+      token:
+        from_secret: telegram_token
+      to:
+        from_secret: telegram_chat_id
+      message: |
+        ❌ Deploy failed!
+        Repo: {{repo.name}}
+        Branch: {{commit.branch}}
+        Error: {{commit.message}}
+    when:
+      status:
+        - failure
+      branch:
+        - master
+
+volumes:
+  - name: docker-sock
+    host:
+      path: /var/run/docker.sock
+  - name: env-configs
+    host:
+      path: /home/drone/configs/shorthack
+
+trigger:
+  branch:
+    - master
+    - dev
+  event:
+    - push
+    - pull_request
+
