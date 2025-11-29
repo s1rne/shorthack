@@ -3,7 +3,8 @@
 import { useState } from 'react';
 import { Container, Title, Text, TextInput, Button, Stack, Card, Group, ActionIcon } from '@mantine/core';
 import { trpc } from '@/lib/trpc/client';
-import { IconTrash } from '@tabler/icons-react';
+import { IconTrash, IconDeviceGamepad2 } from '@tabler/icons-react';
+import Link from 'next/link';
 
 export default function Home() {
   const [name, setName] = useState('');
@@ -35,10 +36,24 @@ export default function Home() {
     <Container size="md" py="xl">
       <Stack gap="xl">
         <div>
-          <Title order={1}>Shorthack</Title>
-          <Text c="dimmed" size="lg" mt="xs">
-            Простое одностраничное приложение с Next.js, tRPC, Mantine и MongoDB
-          </Text>
+          <Group justify="space-between" align="center">
+            <div>
+              <Title order={1}>Shorthack</Title>
+              <Text c="dimmed" size="lg" mt="xs">
+                Простое одностраничное приложение с Next.js, tRPC, Mantine и MongoDB
+              </Text>
+            </div>
+            <Link href="/game">
+              <Button 
+                leftSection={<IconDeviceGamepad2 size={20} />} 
+                size="lg"
+                variant="gradient"
+                gradient={{ from: 'blue', to: 'purple', deg: 90 }}
+              >
+                Играть
+              </Button>
+            </Link>
+          </Group>
         </div>
 
         <Card shadow="sm" padding="lg" radius="md" withBorder>
