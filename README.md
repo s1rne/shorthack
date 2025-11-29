@@ -1,6 +1,8 @@
-# X5 Tech Quest
+# X5 Tech Quest - MAKLAUDS
 
 Интерактивный квест для стендов X5 Tech на ярмарках вакансий.
+
+**PROD version:** http://89.179.244.0:9011/
 
 ## Быстрый запуск (Docker)
 
