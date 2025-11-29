@@ -182,7 +182,7 @@ export default function ProfilePage() {
         </div>
 
         <a
-          href="/game"
+          href="/"
           style={{
             background: 'rgba(195, 183, 255, 0.1)',
             border: '1px solid rgba(195, 183, 255, 0.2)',
@@ -349,7 +349,7 @@ export default function ProfilePage() {
               {availableSurveys.map((survey) => (
                 <a
                   key={survey._id.toString()}
-                  href={`/game/survey/${survey._id.toString()}`}
+                  href={`/survey/${survey._id.toString()}`}
                   style={{
                     background: 'rgba(61, 54, 84, 0.3)',
                     border: '1px solid rgba(152, 255, 76, 0.2)',

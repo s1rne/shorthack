@@ -264,7 +264,7 @@ function SurveysSection({ typing }: { typing: boolean }) {
                 {surveys.map((survey) => (
                   <a
                     key={survey._id.toString()}
-                    href={`/game/survey/${survey._id.toString()}`}
+                    href={`/survey/${survey._id.toString()}`}
                     style={{
                       background: 'rgba(61, 54, 84, 0.3)',
                       border: '1px solid rgba(152, 255, 76, 0.2)',
@@ -825,7 +825,7 @@ export function QuestApp() {
         )}
 
         {screen === 'final' && !typing && (
-          <NeonButton fullWidth onClick={() => window.location.href = '/game/profile'}>
+          <NeonButton fullWidth onClick={() => window.location.href = '/profile'}>
             Личный кабинет →
           </NeonButton>
         )}

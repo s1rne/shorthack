@@ -214,7 +214,7 @@ export default function SurveyPage() {
           <p style={{ color: 'rgba(255,255,255,0.5)', marginBottom: '24px' }}>
             Возможно, он был удалён или ссылка неверная
           </p>
-          <NeonButton onClick={() => window.location.href = '/game'}>
+          <NeonButton onClick={() => window.location.href = '/'}>
             ← На главную
           </NeonButton>
         </div>
@@ -532,7 +532,7 @@ export default function SurveyPage() {
             <NeonButton variant="secondary" onClick={handleRestart}>
               Заново
             </NeonButton>
-            <NeonButton fullWidth onClick={() => window.location.href = '/game'}>
+            <NeonButton fullWidth onClick={() => window.location.href = '/'}>
               На главную
             </NeonButton>
           </div>
