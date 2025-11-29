@@ -1,10 +1,10 @@
-'use client';
+"use client";
 
-import { useState, useEffect, useRef } from 'react';
-import { Canvas, useFrame } from '@react-three/fiber';
-import { Suspense } from 'react';
-import * as THREE from 'three';
-import { trpc } from '@/lib/trpc/client';
+import { useState, useEffect, useRef } from "react";
+import { Canvas, useFrame } from "@react-three/fiber";
+import { Suspense } from "react";
+import * as THREE from "three";
+import { trpc } from "@/lib/trpc/client";
 
 // ========== 3D ДЕКОРАТИВНЫЙ ФОН ==========
 function FloatingShapes() {
@@ -50,7 +50,9 @@ function FloatingShapes() {
 
 function Background3D() {
   return (
-    <div style={{ position: 'fixed', inset: 0, zIndex: 0, pointerEvents: 'none' }}>
+    <div
+      style={{ position: "fixed", inset: 0, zIndex: 0, pointerEvents: "none" }}
+    >
       <Canvas camera={{ position: [0, 0, 5], fov: 60 }}>
         <Suspense fallback={null}>
           <FloatingShapes />
@@ -62,30 +64,36 @@ function Background3D() {
 
 // ========== ТИПЫ ==========
 type Screen =
-  | 'welcome'
-  | 'directions'
-  | 'website'
-  | 'interview'
-  | 'projects'
-  | 'benefits'
-  | 'testTask'
-  | 'techInterview'
-  | 'final'
-  | 'surveys';
+  | "welcome"
+  | "directions"
+  | "website"
+  | "interview"
+  | "projects"
+  | "benefits"
+  | "testTask"
+  | "techInterview"
+  | "final"
+  | "surveys";
 
 const directions = [
-  { id: 'testing', label: 'Тестирование', icon: '🧪' },
-  { id: 'data', label: 'Data analyst / Data scientist', icon: '📊' },
-  { id: 'hr', label: 'IT HR', icon: '👥' },
-  { id: 'devops', label: 'DevOps', icon: '⚙️' },
-  { id: 'support', label: 'IT-поддержка', icon: '🛠️' },
-  { id: 'dev', label: 'Разработка', icon: '💻' },
-  { id: 'infra', label: 'Инфраструктура', icon: '🏗️' },
-  { id: 'analysis', label: 'Системный анализ', icon: '📋' },
+  { id: "testing", label: "Тестирование", icon: "🧪" },
+  { id: "data", label: "Data analyst / Data scientist", icon: "📊" },
+  { id: "hr", label: "IT HR", icon: "👥" },
+  { id: "devops", label: "DevOps", icon: "⚙️" },
+  { id: "support", label: "IT-поддержка", icon: "🛠️" },
+  { id: "dev", label: "Разработка", icon: "💻" },
+  { id: "infra", label: "Инфраструктура", icon: "🏗️" },
+  { id: "analysis", label: "Системный анализ", icon: "📋" },
 ];
 
 // ========== КОМПОНЕНТЫ ==========
-function ChatBubble({ children, delay = 0 }: { children: React.ReactNode; delay?: number }) {
+function ChatBubble({
+  children,
+  delay = 0,
+}: {
+  children: React.ReactNode;
+  delay?: number;
+}) {
   const [visible, setVisible] = useState(delay === 0);
 
   useEffect(() => {
@@ -100,14 +108,14 @@ function ChatBubble({ children, delay = 0 }: { children: React.ReactNode; delay?
   return (
     <div
       style={{
-        background: 'rgba(61, 54, 84, 0.4)',
-        backdropFilter: 'blur(20px)',
-        border: '1px solid rgba(255, 255, 255, 0.08)',
-        padding: '16px 20px',
-        borderRadius: '20px',
-        borderTopLeftRadius: '6px',
-        maxWidth: '92%',
-        animation: 'slideIn 0.4s cubic-bezier(0.16, 1, 0.3, 1)',
+        background: "rgba(61, 54, 84, 0.4)",
+        backdropFilter: "blur(20px)",
+        border: "1px solid rgba(255, 255, 255, 0.08)",
+        padding: "16px 20px",
+        borderRadius: "20px",
+        borderTopLeftRadius: "6px",
+        maxWidth: "92%",
+        animation: "slideIn 0.4s cubic-bezier(0.16, 1, 0.3, 1)",
       }}
     >
       {children}
@@ -119,23 +127,23 @@ function TypingIndicator() {
   return (
     <div
       style={{
-        background: 'rgba(61, 54, 84, 0.3)',
-        backdropFilter: 'blur(10px)',
-        padding: '16px 24px',
-        borderRadius: '20px',
-        borderTopLeftRadius: '6px',
-        width: 'fit-content',
+        background: "rgba(61, 54, 84, 0.3)",
+        backdropFilter: "blur(10px)",
+        padding: "16px 24px",
+        borderRadius: "20px",
+        borderTopLeftRadius: "6px",
+        width: "fit-content",
       }}
     >
-      <div style={{ display: 'flex', gap: '6px' }}>
+      <div style={{ display: "flex", gap: "6px" }}>
         {[0, 1, 2].map((i) => (
           <div
             key={i}
             style={{
-              width: '8px',
-              height: '8px',
-              borderRadius: '50%',
-              background: '#98FF4C',
+              width: "8px",
+              height: "8px",
+              borderRadius: "50%",
+              background: "#98FF4C",
               animation: `typing 1.4s infinite ${i * 0.2}s`,
             }}
           />
@@ -147,26 +155,39 @@ function TypingIndicator() {
 
 function Avatar() {
   return (
-    <div style={{ display: 'flex', alignItems: 'flex-end', gap: '12px', marginBottom: '8px' }}>
+    <div
+      style={{
+        display: "flex",
+        alignItems: "flex-end",
+        gap: "12px",
+        marginBottom: "8px",
+      }}
+    >
       <div
         style={{
-          width: '40px',
-          height: '40px',
-          borderRadius: '50%',
-          background: 'linear-gradient(135deg, #98FF4C 0%, #7ACC3D 100%)',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          fontSize: '16px',
-          fontWeight: '700',
-          color: '#0D0B14',
+          width: "40px",
+          height: "40px",
+          borderRadius: "50%",
+          background: "linear-gradient(135deg, #98FF4C 0%, #7ACC3D 100%)",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          fontSize: "16px",
+          fontWeight: "700",
+          color: "#0D0B14",
           flexShrink: 0,
-          boxShadow: '0 4px 20px rgba(152, 255, 76, 0.3)',
+          boxShadow: "0 4px 20px rgba(152, 255, 76, 0.3)",
         }}
       >
         М
       </div>
-      <span style={{ color: 'rgba(195, 183, 255, 0.6)', fontSize: '13px', fontWeight: '500' }}>
+      <span
+        style={{
+          color: "rgba(195, 183, 255, 0.6)",
+          fontSize: "13px",
+          fontWeight: "500",
+        }}
+      >
         Михаил • X5 Tech
       </span>
     </div>
@@ -177,36 +198,36 @@ function NeonButton({
   children,
   onClick,
   disabled,
-  variant = 'primary',
+  variant = "primary",
   fullWidth,
 }: {
   children: React.ReactNode;
   onClick?: () => void;
   disabled?: boolean;
-  variant?: 'primary' | 'secondary';
+  variant?: "primary" | "secondary";
   fullWidth?: boolean;
 }) {
-  const isPrimary = variant === 'primary';
+  const isPrimary = variant === "primary";
   return (
     <button
       onClick={onClick}
       disabled={disabled}
       style={{
-        flex: fullWidth ? 1 : 'none',
+        flex: fullWidth ? 1 : "none",
         background: isPrimary
-          ? 'linear-gradient(135deg, #98FF4C 0%, #7ACC3D 100%)'
-          : 'rgba(61, 54, 84, 0.4)',
-        border: isPrimary ? 'none' : '1px solid rgba(195, 183, 255, 0.3)',
-        borderRadius: '16px',
-        padding: '18px 28px',
-        color: isPrimary ? '#0D0B14' : '#C3B7FF',
-        fontSize: '15px',
-        fontWeight: '600',
-        cursor: disabled ? 'not-allowed' : 'pointer',
+          ? "linear-gradient(135deg, #98FF4C 0%, #7ACC3D 100%)"
+          : "rgba(61, 54, 84, 0.4)",
+        border: isPrimary ? "none" : "1px solid rgba(195, 183, 255, 0.3)",
+        borderRadius: "16px",
+        padding: "18px 28px",
+        color: isPrimary ? "#0D0B14" : "#C3B7FF",
+        fontSize: "15px",
+        fontWeight: "600",
+        cursor: disabled ? "not-allowed" : "pointer",
         opacity: disabled ? 0.5 : 1,
-        boxShadow: isPrimary ? '0 8px 32px rgba(152, 255, 76, 0.25)' : 'none',
-        transition: 'all 0.3s ease',
-        backdropFilter: 'blur(10px)',
+        boxShadow: isPrimary ? "0 8px 32px rgba(152, 255, 76, 0.25)" : "none",
+        transition: "all 0.3s ease",
+        backdropFilter: "blur(10px)",
       }}
     >
       {children}
@@ -226,100 +247,143 @@ function SurveysSection({ typing }: { typing: boolean }) {
       ) : (
         <>
           <ChatBubble>
-            <p style={{ margin: 0, color: '#FAFAFA', fontSize: '15px', lineHeight: 1.6 }}>
-              Пройди опросы и получи <span style={{ color: '#98FF4C', fontWeight: '700' }}>мерч X5 Tech</span>! 🎁
+            <p
+              style={{
+                margin: 0,
+                color: "#FAFAFA",
+                fontSize: "15px",
+                lineHeight: 1.6,
+              }}
+            >
+              Пройди опросы и получи{" "}
+              <span style={{ color: "#98FF4C", fontWeight: "700" }}>
+                мерч X5 Tech
+              </span>
+              ! 🎁
             </p>
           </ChatBubble>
 
-          <div style={{ marginTop: '16px', animation: 'fadeIn 0.4s ease 0.3s both' }}>
+          <div
+            style={{
+              marginTop: "16px",
+              animation: "fadeIn 0.4s ease 0.3s both",
+            }}
+          >
             <div
               style={{
-                fontSize: '12px',
-                color: 'rgba(195, 183, 255, 0.5)',
-                textTransform: 'uppercase',
-                letterSpacing: '1.5px',
-                marginBottom: '12px',
-                fontWeight: '600',
+                fontSize: "12px",
+                color: "rgba(195, 183, 255, 0.5)",
+                textTransform: "uppercase",
+                letterSpacing: "1.5px",
+                marginBottom: "12px",
+                fontWeight: "600",
               }}
             >
               Доступные опросы
             </div>
 
             {isLoading ? (
-              <div style={{ textAlign: 'center', padding: '24px' }}>
+              <div style={{ textAlign: "center", padding: "24px" }}>
                 <div
                   style={{
-                    width: '32px',
-                    height: '32px',
-                    border: '2px solid rgba(152, 255, 76, 0.2)',
-                    borderTopColor: '#98FF4C',
-                    borderRadius: '50%',
-                    margin: '0 auto',
-                    animation: 'spin 1s linear infinite',
+                    width: "32px",
+                    height: "32px",
+                    border: "2px solid rgba(152, 255, 76, 0.2)",
+                    borderTopColor: "#98FF4C",
+                    borderRadius: "50%",
+                    margin: "0 auto",
+                    animation: "spin 1s linear infinite",
                   }}
                 />
               </div>
             ) : surveys && surveys.length > 0 ? (
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+              <div
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  gap: "10px",
+                }}
+              >
                 {surveys.map((survey) => (
                   <a
                     key={survey._id.toString()}
                     href={`/survey/${survey._id.toString()}`}
                     style={{
-                      background: 'rgba(61, 54, 84, 0.3)',
-                      border: '1px solid rgba(152, 255, 76, 0.2)',
-                      borderRadius: '16px',
-                      padding: '16px 20px',
-                      textDecoration: 'none',
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: '14px',
-                      transition: 'all 0.2s',
+                      background: "rgba(61, 54, 84, 0.3)",
+                      border: "1px solid rgba(152, 255, 76, 0.2)",
+                      borderRadius: "16px",
+                      padding: "16px 20px",
+                      textDecoration: "none",
+                      display: "flex",
+                      alignItems: "center",
+                      gap: "14px",
+                      transition: "all 0.2s",
                     }}
                   >
                     <div
                       style={{
-                        width: '44px',
-                        height: '44px',
-                        borderRadius: '12px',
-                        background: 'linear-gradient(135deg, rgba(152, 255, 76, 0.2), rgba(152, 255, 76, 0.05))',
-                        border: '1px solid rgba(152, 255, 76, 0.3)',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        fontSize: '20px',
+                        width: "44px",
+                        height: "44px",
+                        borderRadius: "12px",
+                        background:
+                          "linear-gradient(135deg, rgba(152, 255, 76, 0.2), rgba(152, 255, 76, 0.05))",
+                        border: "1px solid rgba(152, 255, 76, 0.3)",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        fontSize: "20px",
                         flexShrink: 0,
                       }}
                     >
                       📋
                     </div>
                     <div style={{ flex: 1, minWidth: 0 }}>
-                      <div style={{ color: '#FAFAFA', fontSize: '15px', fontWeight: '600', marginBottom: '4px' }}>
+                      <div
+                        style={{
+                          color: "#FAFAFA",
+                          fontSize: "15px",
+                          fontWeight: "600",
+                          marginBottom: "4px",
+                        }}
+                      >
                         {survey.title}
                       </div>
-                      <div style={{ color: 'rgba(195, 183, 255, 0.6)', fontSize: '13px' }}>
+                      <div
+                        style={{
+                          color: "rgba(195, 183, 255, 0.6)",
+                          fontSize: "13px",
+                        }}
+                      >
                         {survey.questions.length} вопросов
                       </div>
                     </div>
-                    <div style={{ color: '#98FF4C', fontSize: '18px' }}>→</div>
+                    <div style={{ color: "#98FF4C", fontSize: "18px" }}>→</div>
                   </a>
                 ))}
               </div>
             ) : (
               <div
                 style={{
-                  background: 'rgba(61, 54, 84, 0.3)',
-                  border: '1px solid rgba(255, 255, 255, 0.08)',
-                  borderRadius: '16px',
-                  padding: '24px',
-                  textAlign: 'center',
+                  background: "rgba(61, 54, 84, 0.3)",
+                  border: "1px solid rgba(255, 255, 255, 0.08)",
+                  borderRadius: "16px",
+                  padding: "24px",
+                  textAlign: "center",
                 }}
               >
-                <div style={{ fontSize: '36px', marginBottom: '12px' }}>📋</div>
-                <div style={{ color: 'rgba(255,255,255,0.6)', fontSize: '14px', marginBottom: '4px' }}>
+                <div style={{ fontSize: "36px", marginBottom: "12px" }}>📋</div>
+                <div
+                  style={{
+                    color: "rgba(255,255,255,0.6)",
+                    fontSize: "14px",
+                    marginBottom: "4px",
+                  }}
+                >
                   Опросы скоро появятся
                 </div>
-                <div style={{ color: 'rgba(255,255,255,0.4)', fontSize: '12px' }}>
+                <div
+                  style={{ color: "rgba(255,255,255,0.4)", fontSize: "12px" }}
+                >
                   Следи за обновлениями
                 </div>
               </div>
@@ -334,8 +398,8 @@ function SurveysSection({ typing }: { typing: boolean }) {
 
 // ========== ГЛАВНОЕ ==========
 export function QuestApp() {
-  const [screen, setScreen] = useState<Screen>('welcome');
-  const [selectedDirection, setSelectedDirection] = useState<string | null>(null);
+  const [screen, setScreen] = useState<Screen>("welcome");
+  const [selectedDirections, setSelectedDirections] = useState<string[]>([]);
   const [typing, setTyping] = useState(true);
 
   useEffect(() => {
@@ -344,31 +408,46 @@ export function QuestApp() {
     return () => clearTimeout(timer);
   }, [screen]);
 
-  const handleDirection = (id: string) => {
-    setSelectedDirection(id);
+  const handleDirectionToggle = (id: string) => {
+    setSelectedDirections((prev) => {
+      if (prev.includes(id)) {
+        return prev.filter((d) => d !== id);
+      } else {
+        return [...prev, id];
+      }
+    });
+  };
+
+  const handleDirectionsConfirm = () => {
     // Сохраняем выбор в localStorage
-    if (typeof window !== 'undefined') {
-      localStorage.setItem('x5_direction', id);
+    if (typeof window !== "undefined") {
+      localStorage.setItem("x5_directions", JSON.stringify(selectedDirections));
+      // Для совместимости также сохраняем первое направление
+      if (selectedDirections.length > 0) {
+        localStorage.setItem("x5_direction", selectedDirections[0]);
+      }
     }
-    setTimeout(() => setScreen('website'), 600);
+    setScreen("website");
   };
 
   const handleRestart = () => {
-    setScreen('welcome');
-    setSelectedDirection(null);
+    setScreen("welcome");
+    setSelectedDirections([]);
   };
 
   return (
     <div
       style={{
-        width: '100vw',
-        height: '100dvh',
-        background: 'linear-gradient(180deg, #0D0B14 0%, #1a1625 50%, #0D0B14 100%)',
-        overflow: 'hidden',
-        display: 'flex',
-        flexDirection: 'column',
-        fontFamily: '"SF Pro Display", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
-        position: 'relative',
+        width: "100vw",
+        height: "100dvh",
+        background:
+          "linear-gradient(180deg, #0D0B14 0%, #1a1625 50%, #0D0B14 100%)",
+        overflow: "hidden",
+        display: "flex",
+        flexDirection: "column",
+        fontFamily:
+          '"SF Pro Display", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+        position: "relative",
       }}
     >
       <Background3D />
@@ -376,13 +455,14 @@ export function QuestApp() {
       {/* Gradient overlay */}
       <div
         style={{
-          position: 'fixed',
+          position: "fixed",
           top: 0,
           left: 0,
           right: 0,
-          height: '40%',
-          background: 'radial-gradient(ellipse at top, rgba(152, 255, 76, 0.08) 0%, transparent 60%)',
-          pointerEvents: 'none',
+          height: "40%",
+          background:
+            "radial-gradient(ellipse at top, rgba(152, 255, 76, 0.08) 0%, transparent 60%)",
+          pointerEvents: "none",
           zIndex: 1,
         }}
       />
@@ -390,50 +470,62 @@ export function QuestApp() {
       {/* Header */}
       <header
         style={{
-          padding: '16px 20px',
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center',
+          padding: "16px 20px",
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
           zIndex: 10,
-          background: 'rgba(13, 11, 20, 0.8)',
-          backdropFilter: 'blur(20px)',
-          borderBottom: '1px solid rgba(255, 255, 255, 0.05)',
+          background: "rgba(13, 11, 20, 0.8)",
+          backdropFilter: "blur(20px)",
+          borderBottom: "1px solid rgba(255, 255, 255, 0.05)",
         }}
       >
-        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+        <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
           <div
             style={{
-              width: '40px',
-              height: '40px',
-              background: 'linear-gradient(135deg, #98FF4C 0%, #7ACC3D 100%)',
-              borderRadius: '12px',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              boxShadow: '0 4px 20px rgba(152, 255, 76, 0.3)',
+              width: "40px",
+              height: "40px",
+              background: "linear-gradient(135deg, #98FF4C 0%, #7ACC3D 100%)",
+              borderRadius: "12px",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              boxShadow: "0 4px 20px rgba(152, 255, 76, 0.3)",
             }}
           >
-            <span style={{ fontWeight: '800', fontSize: '18px', color: '#0D0B14' }}>X5</span>
+            <span
+              style={{ fontWeight: "800", fontSize: "18px", color: "#0D0B14" }}
+            >
+              X5
+            </span>
           </div>
           <div>
-            <span style={{ color: '#FAFAFA', fontWeight: '600', fontSize: '15px' }}>Tech</span>
-            <div style={{ color: 'rgba(195, 183, 255, 0.6)', fontSize: '11px' }}>Career Quest</div>
+            <span
+              style={{ color: "#FAFAFA", fontWeight: "600", fontSize: "15px" }}
+            >
+              Tech
+            </span>
+            <div
+              style={{ color: "rgba(195, 183, 255, 0.6)", fontSize: "11px" }}
+            >
+              Career Quest
+            </div>
           </div>
         </div>
 
         <button
           onClick={handleRestart}
           style={{
-            background: 'rgba(195, 183, 255, 0.1)',
-            border: '1px solid rgba(195, 183, 255, 0.2)',
-            borderRadius: '10px',
-            padding: '8px 14px',
-            color: '#C3B7FF',
-            fontSize: '13px',
-            fontWeight: '500',
-            cursor: 'pointer',
-            opacity: screen === 'welcome' ? 0 : 1,
-            pointerEvents: screen === 'welcome' ? 'none' : 'auto',
+            background: "rgba(195, 183, 255, 0.1)",
+            border: "1px solid rgba(195, 183, 255, 0.2)",
+            borderRadius: "10px",
+            padding: "8px 14px",
+            color: "#C3B7FF",
+            fontSize: "13px",
+            fontWeight: "500",
+            cursor: "pointer",
+            opacity: screen === "welcome" ? 0 : 1,
+            pointerEvents: screen === "welcome" ? "none" : "auto",
           }}
         >
           ← Начало
@@ -444,16 +536,16 @@ export function QuestApp() {
       <main
         style={{
           flex: 1,
-          display: 'flex',
-          flexDirection: 'column',
-          padding: '20px',
+          display: "flex",
+          flexDirection: "column",
+          padding: "20px",
           zIndex: 10,
-          overflow: 'auto',
-          gap: '12px',
+          overflow: "auto",
+          gap: "12px",
         }}
       >
         {/* ===== WELCOME ===== */}
-        {screen === 'welcome' && (
+        {screen === "welcome" && (
           <>
             <Avatar />
             {typing ? (
@@ -461,12 +553,30 @@ export function QuestApp() {
             ) : (
               <>
                 <ChatBubble>
-                  <p style={{ margin: 0, color: '#FAFAFA', fontSize: '15px', lineHeight: 1.6 }}>
-                    Привет! 👋 Ты попал на стенд <span style={{ color: '#98FF4C', fontWeight: '600' }}>X5 Tech</span> на ярмарке вакансий твоего университета!
+                  <p
+                    style={{
+                      margin: 0,
+                      color: "#FAFAFA",
+                      fontSize: "15px",
+                      lineHeight: 1.6,
+                    }}
+                  >
+                    Привет! 👋 Ты попал на стенд{" "}
+                    <span style={{ color: "#98FF4C", fontWeight: "600" }}>
+                      X5 Tech
+                    </span>{" "}
+                    на ярмарке вакансий твоего университета!
                   </p>
                 </ChatBubble>
                 <ChatBubble delay={400}>
-                  <p style={{ margin: 0, color: '#FAFAFA', fontSize: '15px', lineHeight: 1.6 }}>
+                  <p
+                    style={{
+                      margin: 0,
+                      color: "#FAFAFA",
+                      fontSize: "15px",
+                      lineHeight: 1.6,
+                    }}
+                  >
                     Давай подскажу как попасть к нам на стажировку!
                   </p>
                 </ChatBubble>
@@ -476,7 +586,7 @@ export function QuestApp() {
         )}
 
         {/* ===== DIRECTIONS ===== */}
-        {screen === 'directions' && (
+        {screen === "directions" && (
           <>
             <Avatar />
             {typing ? (
@@ -484,63 +594,170 @@ export function QuestApp() {
             ) : (
               <>
                 <ChatBubble>
-                  <p style={{ margin: 0, color: '#FAFAFA', fontSize: '15px', lineHeight: 1.6 }}>
-                    Мы набираем людей из разных направлений: тестирование, аналитика, разработка и многое другое.
+                  <p
+                    style={{
+                      margin: 0,
+                      color: "#FAFAFA",
+                      fontSize: "15px",
+                      lineHeight: 1.6,
+                    }}
+                  >
+                    Мы набираем людей из разных направлений: тестирование,
+                    аналитика, разработка и многое другое.
                   </p>
                 </ChatBubble>
                 <ChatBubble delay={300}>
-                  <p style={{ margin: 0, color: '#FAFAFA', fontSize: '15px', lineHeight: 1.6 }}>
-                    Что тебе интересно?
+                  <p
+                    style={{
+                      margin: 0,
+                      color: "#FAFAFA",
+                      fontSize: "15px",
+                      lineHeight: 1.6,
+                    }}
+                  >
+                    Что тебе интересно?{" "}
+                    <span
+                      style={{
+                        color: "rgba(195, 183, 255, 0.7)",
+                        fontSize: "13px",
+                      }}
+                    >
+                      (можно выбрать несколько)
+                    </span>
                   </p>
                 </ChatBubble>
 
                 <div
                   style={{
-                    display: 'grid',
-                    gridTemplateColumns: 'repeat(2, 1fr)',
-                    gap: '10px',
-                    marginTop: '12px',
-                    animation: 'fadeIn 0.4s ease 0.5s both',
+                    display: "grid",
+                    gridTemplateColumns: "repeat(2, 1fr)",
+                    gap: "10px",
+                    marginTop: "12px",
+                    animation: "fadeIn 0.4s ease 0.5s both",
                   }}
                 >
-                  {directions.map((d) => (
-                    <button
-                      key={d.id}
-                      onClick={() => handleDirection(d.id)}
+                  {directions.map((d) => {
+                    const isSelected = selectedDirections.includes(d.id);
+                    return (
+                      <button
+                        key={d.id}
+                        onClick={() => handleDirectionToggle(d.id)}
+                        style={{
+                          background: isSelected
+                            ? "linear-gradient(135deg, rgba(152, 255, 76, 0.2), rgba(152, 255, 76, 0.05))"
+                            : "rgba(61, 54, 84, 0.3)",
+                          border: isSelected
+                            ? "1px solid rgba(152, 255, 76, 0.4)"
+                            : "1px solid rgba(255, 255, 255, 0.08)",
+                          borderRadius: "14px",
+                          padding: "14px 12px",
+                          color: "#FAFAFA",
+                          fontSize: "13px",
+                          fontWeight: "500",
+                          cursor: "pointer",
+                          display: "flex",
+                          alignItems: "center",
+                          gap: "8px",
+                          transition: "all 0.2s",
+                          backdropFilter: "blur(10px)",
+                          position: "relative",
+                        }}
+                      >
+                        {/* Checkbox indicator */}
+                        <div
+                          style={{
+                            width: "20px",
+                            height: "20px",
+                            borderRadius: "6px",
+                            border: isSelected
+                              ? "2px solid #98FF4C"
+                              : "2px solid rgba(195, 183, 255, 0.3)",
+                            background: isSelected ? "#98FF4C" : "transparent",
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "center",
+                            flexShrink: 0,
+                            transition: "all 0.2s",
+                          }}
+                        >
+                          {isSelected && (
+                            <svg
+                              width="12"
+                              height="12"
+                              viewBox="0 0 12 12"
+                              fill="none"
+                            >
+                              <path
+                                d="M2 6L5 9L10 3"
+                                stroke="#0D0B14"
+                                strokeWidth="2"
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                              />
+                            </svg>
+                          )}
+                        </div>
+                        <span style={{ fontSize: "18px" }}>{d.icon}</span>
+                        <span
+                          style={{
+                            textAlign: "left",
+                            lineHeight: 1.3,
+                            flex: 1,
+                          }}
+                        >
+                          {d.label}
+                        </span>
+                      </button>
+                    );
+                  })}
+                </div>
+
+                {/* Selected count */}
+                {selectedDirections.length > 0 && (
+                  <div
+                    style={{
+                      marginTop: "12px",
+                      padding: "12px 16px",
+                      background: "rgba(152, 255, 76, 0.1)",
+                      border: "1px solid rgba(152, 255, 76, 0.2)",
+                      borderRadius: "12px",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      gap: "8px",
+                      animation: "fadeIn 0.3s ease",
+                    }}
+                  >
+                    <span
                       style={{
-                        background:
-                          selectedDirection === d.id
-                            ? 'linear-gradient(135deg, rgba(152, 255, 76, 0.2), rgba(152, 255, 76, 0.05))'
-                            : 'rgba(61, 54, 84, 0.3)',
-                        border:
-                          selectedDirection === d.id
-                            ? '1px solid rgba(152, 255, 76, 0.4)'
-                            : '1px solid rgba(255, 255, 255, 0.08)',
-                        borderRadius: '14px',
-                        padding: '14px 12px',
-                        color: '#FAFAFA',
-                        fontSize: '13px',
-                        fontWeight: '500',
-                        cursor: 'pointer',
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: '8px',
-                        transition: 'all 0.2s',
-                        backdropFilter: 'blur(10px)',
+                        color: "#98FF4C",
+                        fontWeight: "600",
+                        fontSize: "14px",
                       }}
                     >
-                      <span style={{ fontSize: '18px' }}>{d.icon}</span>
-                      <span style={{ textAlign: 'left', lineHeight: 1.3 }}>{d.label}</span>
-                    </button>
-                  ))}
-                </div>
+                      Выбрано: {selectedDirections.length}
+                    </span>
+                    <span
+                      style={{
+                        color: "rgba(195, 183, 255, 0.6)",
+                        fontSize: "13px",
+                      }}
+                    >
+                      {selectedDirections.length === 1
+                        ? "направление"
+                        : selectedDirections.length < 5
+                        ? "направления"
+                        : "направлений"}
+                    </span>
+                  </div>
+                )}
               </>
             )}
           </>
         )}
 
         {/* ===== WEBSITE ===== */}
-        {screen === 'website' && (
+        {screen === "website" && (
           <>
             <Avatar />
             {typing ? (
@@ -548,74 +765,129 @@ export function QuestApp() {
             ) : (
               <>
                 <ChatBubble>
-                  <p style={{ margin: 0, color: '#FAFAFA', fontSize: '15px', lineHeight: 1.6 }}>
-                    Это наш сайт — здесь ты можешь узнать о компании и отправить анкету на стажировку!
+                  <p
+                    style={{
+                      margin: 0,
+                      color: "#FAFAFA",
+                      fontSize: "15px",
+                      lineHeight: 1.6,
+                    }}
+                  >
+                    Это наш сайт — здесь ты можешь узнать о компании и отправить
+                    анкету на стажировку!
                   </p>
                 </ChatBubble>
 
                 {/* Website preview */}
                 <div
                   style={{
-                    background: 'rgba(61, 54, 84, 0.3)',
-                    borderRadius: '16px',
-                    overflow: 'hidden',
-                    border: '1px solid rgba(255, 255, 255, 0.08)',
-                    marginTop: '4px',
-                    animation: 'fadeIn 0.4s ease 0.3s both',
+                    background: "rgba(61, 54, 84, 0.3)",
+                    borderRadius: "16px",
+                    overflow: "hidden",
+                    border: "1px solid rgba(255, 255, 255, 0.08)",
+                    marginTop: "4px",
+                    animation: "fadeIn 0.4s ease 0.3s both",
                   }}
                 >
                   <div
                     style={{
-                      background: 'rgba(0, 0, 0, 0.3)',
-                      padding: '10px 14px',
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: '8px',
+                      background: "rgba(0, 0, 0, 0.3)",
+                      padding: "10px 14px",
+                      display: "flex",
+                      alignItems: "center",
+                      gap: "8px",
                     }}
                   >
-                    <div style={{ display: 'flex', gap: '6px' }}>
-                      <div style={{ width: '10px', height: '10px', borderRadius: '50%', background: '#ff5f56' }} />
-                      <div style={{ width: '10px', height: '10px', borderRadius: '50%', background: '#ffbd2e' }} />
-                      <div style={{ width: '10px', height: '10px', borderRadius: '50%', background: '#27ca41' }} />
+                    <div style={{ display: "flex", gap: "6px" }}>
+                      <div
+                        style={{
+                          width: "10px",
+                          height: "10px",
+                          borderRadius: "50%",
+                          background: "#ff5f56",
+                        }}
+                      />
+                      <div
+                        style={{
+                          width: "10px",
+                          height: "10px",
+                          borderRadius: "50%",
+                          background: "#ffbd2e",
+                        }}
+                      />
+                      <div
+                        style={{
+                          width: "10px",
+                          height: "10px",
+                          borderRadius: "50%",
+                          background: "#27ca41",
+                        }}
+                      />
                     </div>
-                    <span style={{ fontSize: '12px', color: 'rgba(255,255,255,0.5)', marginLeft: '8px' }}>
+                    <span
+                      style={{
+                        fontSize: "12px",
+                        color: "rgba(255,255,255,0.5)",
+                        marginLeft: "8px",
+                      }}
+                    >
                       techcrew.start.x5.ru
                     </span>
                   </div>
                   <div
                     style={{
-                      padding: '28px 20px',
-                      background: 'linear-gradient(135deg, #0D0B14 0%, #1a1625 100%)',
-                      textAlign: 'center',
+                      padding: "28px 20px",
+                      background:
+                        "linear-gradient(135deg, #0D0B14 0%, #1a1625 100%)",
+                      textAlign: "center",
                     }}
                   >
                     <div
                       style={{
-                        width: '50px',
-                        height: '50px',
-                        background: 'linear-gradient(135deg, #98FF4C, #7ACC3D)',
-                        borderRadius: '14px',
-                        margin: '0 auto 16px',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        fontWeight: '800',
-                        color: '#0D0B14',
+                        width: "50px",
+                        height: "50px",
+                        background: "linear-gradient(135deg, #98FF4C, #7ACC3D)",
+                        borderRadius: "14px",
+                        margin: "0 auto 16px",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        fontWeight: "800",
+                        color: "#0D0B14",
                       }}
                     >
                       X5
                     </div>
-                    <div style={{ fontSize: '18px', fontWeight: '700', color: '#FAFAFA', marginBottom: '6px' }}>
+                    <div
+                      style={{
+                        fontSize: "18px",
+                        fontWeight: "700",
+                        color: "#FAFAFA",
+                        marginBottom: "6px",
+                      }}
+                    >
                       X5 Tech Careers
                     </div>
-                    <div style={{ fontSize: '13px', color: 'rgba(195, 183, 255, 0.6)' }}>
+                    <div
+                      style={{
+                        fontSize: "13px",
+                        color: "rgba(195, 183, 255, 0.6)",
+                      }}
+                    >
                       Стажировка и карьера в IT
                     </div>
                   </div>
                 </div>
 
                 <ChatBubble delay={500}>
-                  <p style={{ margin: 0, color: '#FAFAFA', fontSize: '15px', lineHeight: 1.6 }}>
+                  <p
+                    style={{
+                      margin: 0,
+                      color: "#FAFAFA",
+                      fontSize: "15px",
+                      lineHeight: 1.6,
+                    }}
+                  >
                     Предлагаю отправить анкету и перейти к собеседованиям! 📝
                   </p>
                 </ChatBubble>
@@ -625,7 +897,7 @@ export function QuestApp() {
         )}
 
         {/* ===== INTERVIEW ===== */}
-        {screen === 'interview' && (
+        {screen === "interview" && (
           <>
             <Avatar />
             {typing ? (
@@ -633,12 +905,30 @@ export function QuestApp() {
             ) : (
               <>
                 <ChatBubble>
-                  <p style={{ margin: 0, color: '#FAFAFA', fontSize: '15px', lineHeight: 1.6 }}>
-                    После заполнения анкеты следует <span style={{ color: '#C3B7FF', fontWeight: '600' }}>HR-интервью</span>.
+                  <p
+                    style={{
+                      margin: 0,
+                      color: "#FAFAFA",
+                      fontSize: "15px",
+                      lineHeight: 1.6,
+                    }}
+                  >
+                    После заполнения анкеты следует{" "}
+                    <span style={{ color: "#C3B7FF", fontWeight: "600" }}>
+                      HR-интервью
+                    </span>
+                    .
                   </p>
                 </ChatBubble>
                 <ChatBubble delay={300}>
-                  <p style={{ margin: 0, color: '#FAFAFA', fontSize: '15px', lineHeight: 1.6 }}>
+                  <p
+                    style={{
+                      margin: 0,
+                      color: "#FAFAFA",
+                      fontSize: "15px",
+                      lineHeight: 1.6,
+                    }}
+                  >
                     С тобой пообщается специалист компании и задаст вопросы.
                   </p>
                 </ChatBubble>
@@ -648,7 +938,7 @@ export function QuestApp() {
         )}
 
         {/* ===== TEST TASK ===== */}
-        {screen === 'testTask' && (
+        {screen === "testTask" && (
           <>
             <Avatar />
             {typing ? (
@@ -656,12 +946,30 @@ export function QuestApp() {
             ) : (
               <>
                 <ChatBubble>
-                  <p style={{ margin: 0, color: '#FAFAFA', fontSize: '15px', lineHeight: 1.6 }}>
-                    А после HR-интервью тебя ждёт <span style={{ color: '#98FF4C', fontWeight: '600' }}>тестовое задание</span>. 📋
+                  <p
+                    style={{
+                      margin: 0,
+                      color: "#FAFAFA",
+                      fontSize: "15px",
+                      lineHeight: 1.6,
+                    }}
+                  >
+                    А после HR-интервью тебя ждёт{" "}
+                    <span style={{ color: "#98FF4C", fontWeight: "600" }}>
+                      тестовое задание
+                    </span>
+                    . 📋
                   </p>
                 </ChatBubble>
                 <ChatBubble delay={400}>
-                  <p style={{ margin: 0, color: '#FAFAFA', fontSize: '15px', lineHeight: 1.6 }}>
+                  <p
+                    style={{
+                      margin: 0,
+                      color: "#FAFAFA",
+                      fontSize: "15px",
+                      lineHeight: 1.6,
+                    }}
+                  >
                     Оно может отличаться в зависимости от команды и направления.
                   </p>
                 </ChatBubble>
@@ -671,7 +979,7 @@ export function QuestApp() {
         )}
 
         {/* ===== TECH INTERVIEW ===== */}
-        {screen === 'techInterview' && (
+        {screen === "techInterview" && (
           <>
             <Avatar />
             {typing ? (
@@ -679,13 +987,32 @@ export function QuestApp() {
             ) : (
               <>
                 <ChatBubble>
-                  <p style={{ margin: 0, color: '#FAFAFA', fontSize: '15px', lineHeight: 1.6 }}>
-                    Последняя часть — <span style={{ color: '#C3B7FF', fontWeight: '600' }}>техническое интервью</span>. После него ты попадёшь в команду! 🎉
+                  <p
+                    style={{
+                      margin: 0,
+                      color: "#FAFAFA",
+                      fontSize: "15px",
+                      lineHeight: 1.6,
+                    }}
+                  >
+                    Последняя часть —{" "}
+                    <span style={{ color: "#C3B7FF", fontWeight: "600" }}>
+                      техническое интервью
+                    </span>
+                    . После него ты попадёшь в команду! 🎉
                   </p>
                 </ChatBubble>
                 <ChatBubble delay={400}>
-                  <p style={{ margin: 0, color: '#FAFAFA', fontSize: '15px', lineHeight: 1.6 }}>
-                    Тебя встретит ментор, расскажет подробнее о компании и том, чем тебе предстоит заниматься.
+                  <p
+                    style={{
+                      margin: 0,
+                      color: "#FAFAFA",
+                      fontSize: "15px",
+                      lineHeight: 1.6,
+                    }}
+                  >
+                    Тебя встретит ментор, расскажет подробнее о компании и том,
+                    чем тебе предстоит заниматься.
                   </p>
                 </ChatBubble>
               </>
@@ -694,7 +1021,7 @@ export function QuestApp() {
         )}
 
         {/* ===== PROJECTS ===== */}
-        {screen === 'projects' && (
+        {screen === "projects" && (
           <>
             <Avatar />
             {typing ? (
@@ -702,13 +1029,39 @@ export function QuestApp() {
             ) : (
               <>
                 <ChatBubble>
-                  <p style={{ margin: 0, color: '#FAFAFA', fontSize: '15px', lineHeight: 1.6 }}>
-                    Наши команды создают платформу по управлению данными и BI аналитике, цифровую платформу для поставщиков, систему сбора обратной связи для торговых сетей, платформу для A/B тестирования бизнес-процессов и другие проекты цифровизации группы компаний X5.
+                  <p
+                    style={{
+                      margin: 0,
+                      color: "#FAFAFA",
+                      fontSize: "15px",
+                      lineHeight: 1.6,
+                    }}
+                  >
+                    Наши команды создают платформу по управлению данными и BI
+                    аналитике, цифровую платформу для поставщиков, систему сбора
+                    обратной связи для торговых сетей, платформу для A/B
+                    тестирования бизнес-процессов и другие проекты цифровизации
+                    группы компаний X5.
                   </p>
                 </ChatBubble>
                 <ChatBubble delay={400}>
-                  <p style={{ margin: 0, color: '#FAFAFA', fontSize: '15px', lineHeight: 1.6 }}>
-                    У нас в работе <span style={{ color: '#98FF4C', fontWeight: '700' }}>больше 100 проектов</span> и <span style={{ color: '#98FF4C', fontWeight: '700' }}>50 продуктов</span>! 🚀
+                  <p
+                    style={{
+                      margin: 0,
+                      color: "#FAFAFA",
+                      fontSize: "15px",
+                      lineHeight: 1.6,
+                    }}
+                  >
+                    У нас в работе{" "}
+                    <span style={{ color: "#98FF4C", fontWeight: "700" }}>
+                      больше 100 проектов
+                    </span>{" "}
+                    и{" "}
+                    <span style={{ color: "#98FF4C", fontWeight: "700" }}>
+                      50 продуктов
+                    </span>
+                    ! 🚀
                   </p>
                 </ChatBubble>
               </>
@@ -717,7 +1070,7 @@ export function QuestApp() {
         )}
 
         {/* ===== BENEFITS ===== */}
-        {screen === 'benefits' && (
+        {screen === "benefits" && (
           <>
             <Avatar />
             {typing ? (
@@ -725,13 +1078,32 @@ export function QuestApp() {
             ) : (
               <>
                 <ChatBubble>
-                  <p style={{ margin: 0, color: '#FAFAFA', fontSize: '15px', lineHeight: 1.6 }}>
-                    У нас нет дресс-кода, зато есть <span style={{ color: '#C3B7FF', fontWeight: '600' }}>гибкий график</span> и сплоченная команда экспертов! 💪
+                  <p
+                    style={{
+                      margin: 0,
+                      color: "#FAFAFA",
+                      fontSize: "15px",
+                      lineHeight: 1.6,
+                    }}
+                  >
+                    У нас нет дресс-кода, зато есть{" "}
+                    <span style={{ color: "#C3B7FF", fontWeight: "600" }}>
+                      гибкий график
+                    </span>{" "}
+                    и сплоченная команда экспертов! 💪
                   </p>
                 </ChatBubble>
                 <ChatBubble delay={400}>
-                  <p style={{ margin: 0, color: '#FAFAFA', fontSize: '15px', lineHeight: 1.6 }}>
-                    А ещё каждый может выбрать удобный формат работы — офис (в Москве, Иннополисе и Ижевске) или удалёнку.
+                  <p
+                    style={{
+                      margin: 0,
+                      color: "#FAFAFA",
+                      fontSize: "15px",
+                      lineHeight: 1.6,
+                    }}
+                  >
+                    А ещё каждый может выбрать удобный формат работы — офис (в
+                    Москве, Иннополисе и Ижевске) или удалёнку.
                   </p>
                 </ChatBubble>
               </>
@@ -740,7 +1112,7 @@ export function QuestApp() {
         )}
 
         {/* ===== FINAL ===== */}
-        {screen === 'final' && (
+        {screen === "final" && (
           <>
             <Avatar />
             {typing ? (
@@ -748,13 +1120,35 @@ export function QuestApp() {
             ) : (
               <>
                 <ChatBubble>
-                  <p style={{ margin: 0, color: '#FAFAFA', fontSize: '15px', lineHeight: 1.6 }}>
-                    Теперь предлагаю тебе <span style={{ color: '#98FF4C', fontWeight: '600' }}>оставить анкету</span> на стажировку и пройти этот путь! 🚀
+                  <p
+                    style={{
+                      margin: 0,
+                      color: "#FAFAFA",
+                      fontSize: "15px",
+                      lineHeight: 1.6,
+                    }}
+                  >
+                    Теперь предлагаю тебе{" "}
+                    <span style={{ color: "#98FF4C", fontWeight: "600" }}>
+                      оставить анкету
+                    </span>{" "}
+                    на стажировку и пройти этот путь! 🚀
                   </p>
                 </ChatBubble>
                 <ChatBubble delay={400}>
-                  <p style={{ margin: 0, color: '#FAFAFA', fontSize: '15px', lineHeight: 1.6 }}>
-                    Переходи в <span style={{ color: '#C3B7FF', fontWeight: '600' }}>личный кабинет</span>, проходи опросы и получай мерч! 🎁
+                  <p
+                    style={{
+                      margin: 0,
+                      color: "#FAFAFA",
+                      fontSize: "15px",
+                      lineHeight: 1.6,
+                    }}
+                  >
+                    Переходи в{" "}
+                    <span style={{ color: "#C3B7FF", fontWeight: "600" }}>
+                      личный кабинет
+                    </span>
+                    , проходи опросы и получай мерч! 🎁
                   </p>
                 </ChatBubble>
               </>
@@ -763,79 +1157,102 @@ export function QuestApp() {
         )}
 
         {/* ===== SURVEYS ===== */}
-        {screen === 'surveys' && <SurveysSection typing={typing} />}
+        {screen === "surveys" && <SurveysSection typing={typing} />}
       </main>
 
       {/* Footer */}
       <footer
         style={{
-          padding: '16px 20px',
-          paddingBottom: '28px',
+          padding: "16px 20px",
+          paddingBottom: "28px",
           zIndex: 10,
-          background: 'rgba(13, 11, 20, 0.8)',
-          backdropFilter: 'blur(20px)',
-          borderTop: '1px solid rgba(255, 255, 255, 0.05)',
+          background: "rgba(13, 11, 20, 0.8)",
+          backdropFilter: "blur(20px)",
+          borderTop: "1px solid rgba(255, 255, 255, 0.05)",
         }}
       >
-        {screen === 'welcome' && !typing && (
-          <NeonButton fullWidth onClick={() => setScreen('directions')}>
+        {screen === "welcome" && !typing && (
+          <NeonButton fullWidth onClick={() => setScreen("directions")}>
             Далее →
           </NeonButton>
         )}
 
-        {screen === 'website' && !typing && (
-          <div style={{ display: 'flex', gap: '10px' }}>
-            <NeonButton variant="secondary" onClick={() => window.open('https://techcrew.start.x5.ru/', '_blank')}>
+        {screen === "directions" && !typing && (
+          <NeonButton
+            fullWidth
+            onClick={handleDirectionsConfirm}
+            disabled={selectedDirections.length === 0}
+          >
+            {selectedDirections.length === 0 ? "Выбери направление" : "Далее →"}
+          </NeonButton>
+        )}
+
+        {screen === "website" && !typing && (
+          <div style={{ display: "flex", gap: "10px" }}>
+            <NeonButton
+              variant="secondary"
+              onClick={() =>
+                window.open("https://techcrew.start.x5.ru/", "_blank")
+              }
+            >
               🌐 Сайт
             </NeonButton>
-            <NeonButton fullWidth onClick={() => setScreen('interview')}>
+            <NeonButton fullWidth onClick={() => setScreen("interview")}>
               Далее →
             </NeonButton>
           </div>
         )}
 
-        {screen === 'interview' && !typing && (
-          <NeonButton fullWidth onClick={() => setScreen('testTask')}>
+        {screen === "interview" && !typing && (
+          <NeonButton fullWidth onClick={() => setScreen("testTask")}>
             Далее →
           </NeonButton>
         )}
 
-        {screen === 'testTask' && !typing && (
-          <NeonButton fullWidth onClick={() => setScreen('techInterview')}>
+        {screen === "testTask" && !typing && (
+          <NeonButton fullWidth onClick={() => setScreen("techInterview")}>
             Далее →
           </NeonButton>
         )}
 
-        {screen === 'techInterview' && !typing && (
-          <NeonButton fullWidth onClick={() => setScreen('projects')}>
+        {screen === "techInterview" && !typing && (
+          <NeonButton fullWidth onClick={() => setScreen("projects")}>
             Далее →
           </NeonButton>
         )}
 
-        {screen === 'projects' && !typing && (
-          <NeonButton fullWidth onClick={() => setScreen('benefits')}>
+        {screen === "projects" && !typing && (
+          <NeonButton fullWidth onClick={() => setScreen("benefits")}>
             Далее →
           </NeonButton>
         )}
 
-        {screen === 'benefits' && !typing && (
-          <NeonButton fullWidth onClick={() => setScreen('final')}>
+        {screen === "benefits" && !typing && (
+          <NeonButton fullWidth onClick={() => setScreen("final")}>
             Далее →
           </NeonButton>
         )}
 
-        {screen === 'final' && !typing && (
-          <NeonButton fullWidth onClick={() => window.location.href = '/profile'}>
+        {screen === "final" && !typing && (
+          <NeonButton
+            fullWidth
+            onClick={() => (window.location.href = "/profile")}
+          >
             Личный кабинет →
           </NeonButton>
         )}
 
-        {screen === 'surveys' && !typing && (
-          <div style={{ display: 'flex', gap: '10px' }}>
+        {screen === "surveys" && !typing && (
+          <div style={{ display: "flex", gap: "10px" }}>
             <NeonButton variant="secondary" onClick={handleRestart}>
               ← Начало
             </NeonButton>
-            <NeonButton fullWidth onClick={() => window.open('https://techcrew.start.x5.ru/', '_blank')}>
+            <NeonButton
+              fullWidth
+              onClick={() =>
+                window.open("https://techcrew.start.x5.ru/", "_blank")
+              }
+            >
               На стажировку 🚀
             </NeonButton>
           </div>

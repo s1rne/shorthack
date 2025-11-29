@@ -51,7 +51,7 @@ interface UserProfile {
     promoCode: string;
     completedAt: string;
   }[];
-  selectedDirection: string | null;
+  selectedDirections: string[];
 }
 
 // ========== КОМПОНЕНТЫ ==========
@@ -96,9 +96,33 @@ export default function ProfilePage() {
   useEffect(() => {
     // Загрузка профиля из localStorage
     const loadProfile = () => {
+      // Всегда берём актуальные направления из x5_directions
+      const storedDirections = localStorage.getItem('x5_directions');
+      let selectedDirections: string[] = [];
+      if (storedDirections) {
+        try {
+          selectedDirections = JSON.parse(storedDirections);
+        } catch {
+          selectedDirections = [];
+        }
+      } else {
+        // Fallback на старый формат
+        const oldDirection = localStorage.getItem('x5_direction');
+        if (oldDirection) {
+          selectedDirections = [oldDirection];
+        }
+      }
+
       const stored = localStorage.getItem('x5_user_profile');
       if (stored) {
-        setProfile(JSON.parse(stored));
+        const parsedProfile = JSON.parse(stored);
+        // Всегда обновляем направления из актуального x5_directions
+        parsedProfile.selectedDirections = selectedDirections;
+        // Удаляем старый формат если есть
+        delete parsedProfile.selectedDirection;
+        // Сохраняем обновлённый профиль
+        localStorage.setItem('x5_user_profile', JSON.stringify(parsedProfile));
+        setProfile(parsedProfile);
       } else {
         // Создаём новый профиль
         const visitorId = localStorage.getItem('x5_visitor_id') || `visitor_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
@@ -108,7 +132,7 @@ export default function ProfilePage() {
           visitorId,
           totalPoints: 0,
           completedSurveys: [],
-          selectedDirection: localStorage.getItem('x5_direction'),
+          selectedDirections,
         };
         localStorage.setItem('x5_user_profile', JSON.stringify(newProfile));
         setProfile(newProfile);
@@ -239,27 +263,41 @@ export default function ProfilePage() {
           </div>
         </div>
 
-        {/* Direction */}
-        {profile?.selectedDirection && (
-          <div
-            style={{
-              background: 'rgba(61, 54, 84, 0.3)',
-              border: '1px solid rgba(195, 183, 255, 0.2)',
-              borderRadius: '16px',
-              padding: '16px 20px',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '12px',
-            }}
-          >
-            <div style={{ fontSize: '24px' }}>{directions[profile.selectedDirection]?.split(' ')[0]}</div>
-            <div>
-              <div style={{ color: 'rgba(195, 183, 255, 0.6)', fontSize: '12px', marginBottom: '2px' }}>
-                Твоё направление
-              </div>
-              <div style={{ color: '#FAFAFA', fontSize: '15px', fontWeight: '600' }}>
-                {directions[profile.selectedDirection]?.split(' ').slice(1).join(' ')}
-              </div>
+        {/* Directions */}
+        {profile?.selectedDirections && profile.selectedDirections.length > 0 && (
+          <div>
+            <div
+              style={{
+                fontSize: '12px',
+                color: 'rgba(195, 183, 255, 0.5)',
+                textTransform: 'uppercase',
+                letterSpacing: '1.5px',
+                marginBottom: '12px',
+                fontWeight: '600',
+              }}
+            >
+              {profile.selectedDirections.length === 1 ? 'Твоё направление' : 'Твои направления'}
+            </div>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+              {profile.selectedDirections.map((dirId) => (
+                <div
+                  key={dirId}
+                  style={{
+                    background: 'rgba(61, 54, 84, 0.3)',
+                    border: '1px solid rgba(195, 183, 255, 0.2)',
+                    borderRadius: '14px',
+                    padding: '14px 16px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '12px',
+                  }}
+                >
+                  <div style={{ fontSize: '22px' }}>{directions[dirId]?.split(' ')[0]}</div>
+                  <div style={{ color: '#FAFAFA', fontSize: '14px', fontWeight: '500' }}>
+                    {directions[dirId]?.split(' ').slice(1).join(' ')}
+                  </div>
+                </div>
+              ))}
             </div>
           </div>
         )}

@@ -126,12 +126,32 @@ export default function SurveyPage() {
               // Сохраняем в localStorage профиля
               if (typeof window !== 'undefined' && survey) {
                 const stored = localStorage.getItem('x5_user_profile');
-                const profile = stored ? JSON.parse(stored) : {
-                  visitorId,
-                  totalPoints: 0,
-                  completedSurveys: [],
-                  selectedDirection: localStorage.getItem('x5_direction'),
-                };
+                let profile;
+                if (stored) {
+                  profile = JSON.parse(stored);
+                  // Миграция старого формата
+                  if (profile.selectedDirection && !profile.selectedDirections) {
+                    profile.selectedDirections = [profile.selectedDirection];
+                    delete profile.selectedDirection;
+                  }
+                } else {
+                  // Создаём новый профиль
+                  const storedDirections = localStorage.getItem('x5_directions');
+                  let selectedDirections: string[] = [];
+                  if (storedDirections) {
+                    try {
+                      selectedDirections = JSON.parse(storedDirections);
+                    } catch {
+                      selectedDirections = [];
+                    }
+                  }
+                  profile = {
+                    visitorId,
+                    totalPoints: 0,
+                    completedSurveys: [],
+                    selectedDirections,
+                  };
+                }
                 
                 // Добавляем результат
                 profile.completedSurveys.push({
