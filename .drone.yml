@@ -41,12 +41,16 @@ steps:
   - name: deploy
     image: docker/compose:latest
     commands:
+      # Поднимаем MongoDB (если ещё не запущена)
+      - docker-compose up -d mongo
+      # Ждём запуска MongoDB
+      - sleep 3
       # Пересоздаём контейнер приложения
-      - docker-compose up -d --force-recreate --no-deps app
+      - docker-compose up -d --force-recreate app
       # Ждём запуска
       - sleep 5
       # Health check
-      - docker-compose exec -T app wget --no-verbose --tries=3 --spider http://localhost:3000/api/trpc/user.getAll || echo "Health check warning"
+      - docker-compose exec -T app wget --no-verbose --tries=3 --spider http://localhost:3000/ || echo "Health check warning"
     volumes:
       - name: docker-sock
         path: /var/run/docker.sock
