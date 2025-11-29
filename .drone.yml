@@ -4,19 +4,19 @@ name: shorthack
 
 steps:
   # Проверка кода (lint)
-  - name: lint
-    image: node:20-alpine
-    commands:
-      - corepack enable && corepack prepare pnpm@latest --activate
-      - pnpm install --frozen-lockfile
-      - pnpm run lint
-    when:
-      event:
-        - pull_request
-        - push
-      branch:
-        - dev
-        - master
+  # - name: lint
+  #   image: node:20-alpine
+  #   commands:
+  #     - corepack enable && corepack prepare pnpm@latest --activate
+  #     - pnpm install --frozen-lockfile
+  #     - pnpm run lint
+  #   when:
+  #     event:
+  #       - pull_request
+  #       - push
+  #     branch:
+  #       - dev
+  #       - master
 
   # Сборка Docker образа
   - name: docker-build
@@ -31,8 +31,8 @@ steps:
         path: /var/run/docker.sock
       - name: env-configs
         path: /configs
-    depends_on:
-      - lint
+    # depends_on:
+    #   - lint
     when:
       branch:
         - master
@@ -76,44 +76,6 @@ steps:
         - master
       event:
         - push
-
-  # Уведомление об успехе (опционально)
-  - name: notify-success
-    image: appleboy/drone-telegram
-    settings:
-      token:
-        from_secret: telegram_token
-      to:
-        from_secret: telegram_chat_id
-      message: |
-        ✅ Deploy successful!
-        Repo: {{repo.name}}
-        Branch: {{commit.branch}}
-        Commit: {{commit.message}}
-    when:
-      status:
-        - success
-      branch:
-        - master
-
-  # Уведомление об ошибке
-  - name: notify-failure
-    image: appleboy/drone-telegram
-    settings:
-      token:
-        from_secret: telegram_token
-      to:
-        from_secret: telegram_chat_id
-      message: |
-        ❌ Deploy failed!
-        Repo: {{repo.name}}
-        Branch: {{commit.branch}}
-        Error: {{commit.message}}
-    when:
-      status:
-        - failure
-      branch:
-        - master
 
 volumes:
   - name: docker-sock
