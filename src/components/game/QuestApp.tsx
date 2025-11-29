@@ -73,6 +73,8 @@ type Screen =
   | "testTask"
   | "techInterview"
   | "final"
+  | "registration"
+  | "login"
   | "surveys";
 
 const directions = [
@@ -402,6 +404,61 @@ export function QuestApp() {
   const [selectedDirections, setSelectedDirections] = useState<string[]>([]);
   const [typing, setTyping] = useState(true);
 
+  // Форма регистрации
+  const [telegram, setTelegram] = useState("");
+  const [password, setPassword] = useState("");
+  const [university, setUniversity] = useState("");
+  const [course, setCourse] = useState<number>(1);
+  const [regError, setRegError] = useState<string | null>(null);
+  const [regSuccess, setRegSuccess] = useState(false);
+
+  // Форма входа
+  const [loginTelegram, setLoginTelegram] = useState("");
+  const [loginPassword, setLoginPassword] = useState("");
+  const [loginError, setLoginError] = useState<string | null>(null);
+
+  const registerMutation = trpc.player.register.useMutation({
+    onSuccess: () => {
+      setRegSuccess(true);
+      setRegError(null);
+      // Сохраняем telegram в localStorage
+      if (typeof window !== "undefined") {
+        localStorage.setItem("x5_telegram", telegram);
+      }
+    },
+    onError: (error) => {
+      setRegError(error.message);
+    },
+  });
+
+  const loginMutation = trpc.player.login.useMutation({
+    onSuccess: (data) => {
+      // Сохраняем данные в localStorage
+      if (typeof window !== "undefined") {
+        localStorage.setItem("x5_telegram", data.telegram);
+        localStorage.setItem(
+          "x5_directions",
+          JSON.stringify(data.selectedDirections)
+        );
+      }
+      // Переходим в профиль
+      window.location.href = "/profile";
+    },
+    onError: (error) => {
+      setLoginError(error.message);
+    },
+  });
+
+  // Проверка авторизации при загрузке - если уже вошёл, перекидываем в профиль
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const savedTelegram = localStorage.getItem("x5_telegram");
+      if (savedTelegram) {
+        window.location.href = "/profile";
+      }
+    }
+  }, []);
+
   useEffect(() => {
     setTyping(true);
     const timer = setTimeout(() => setTyping(false), 1000);
@@ -430,9 +487,62 @@ export function QuestApp() {
     setScreen("website");
   };
 
+  const handleRegistration = () => {
+    setRegError(null);
+
+    // Валидация
+    if (!telegram.startsWith("@")) {
+      setRegError("Telegram должен начинаться с @");
+      return;
+    }
+    if (password.length < 4) {
+      setRegError("Пароль должен быть минимум 4 символа");
+      return;
+    }
+    if (!university.trim()) {
+      setRegError("Укажите ВУЗ");
+      return;
+    }
+
+    registerMutation.mutate({
+      telegram,
+      password,
+      university,
+      course,
+      selectedDirections,
+    });
+  };
+
+  const handleLogin = () => {
+    setLoginError(null);
+
+    if (!loginTelegram.trim()) {
+      setLoginError("Введите Telegram");
+      return;
+    }
+    if (!loginPassword.trim()) {
+      setLoginError("Введите пароль");
+      return;
+    }
+
+    loginMutation.mutate({
+      telegram: loginTelegram,
+      password: loginPassword,
+    });
+  };
+
   const handleRestart = () => {
     setScreen("welcome");
     setSelectedDirections([]);
+    setTelegram("");
+    setPassword("");
+    setUniversity("");
+    setCourse(1);
+    setRegError(null);
+    setRegSuccess(false);
+    setLoginTelegram("");
+    setLoginPassword("");
+    setLoginError(null);
   };
 
   return (
@@ -513,23 +623,42 @@ export function QuestApp() {
           </div>
         </div>
 
-        <button
-          onClick={handleRestart}
-          style={{
-            background: "rgba(195, 183, 255, 0.1)",
-            border: "1px solid rgba(195, 183, 255, 0.2)",
-            borderRadius: "10px",
-            padding: "8px 14px",
-            color: "#C3B7FF",
-            fontSize: "13px",
-            fontWeight: "500",
-            cursor: "pointer",
-            opacity: screen === "welcome" ? 0 : 1,
-            pointerEvents: screen === "welcome" ? "none" : "auto",
-          }}
-        >
-          ← Начало
-        </button>
+        <div style={{ display: "flex", gap: "8px" }}>
+          {screen === "welcome" && (
+            <button
+              onClick={() => setScreen("login")}
+              style={{
+                background: "linear-gradient(135deg, #98FF4C 0%, #7ACC3D 100%)",
+                border: "none",
+                borderRadius: "10px",
+                padding: "8px 16px",
+                color: "#0D0B14",
+                fontSize: "13px",
+                fontWeight: "600",
+                cursor: "pointer",
+              }}
+            >
+              Войти
+            </button>
+          )}
+          {screen !== "welcome" && (
+            <button
+              onClick={handleRestart}
+              style={{
+                background: "rgba(195, 183, 255, 0.1)",
+                border: "1px solid rgba(195, 183, 255, 0.2)",
+                borderRadius: "10px",
+                padding: "8px 14px",
+                color: "#C3B7FF",
+                fontSize: "13px",
+                fontWeight: "500",
+                cursor: "pointer",
+              }}
+            >
+              ← Начало
+            </button>
+          )}
+        </div>
       </header>
 
       {/* Main */}
@@ -1130,9 +1259,9 @@ export function QuestApp() {
                   >
                     Теперь предлагаю тебе{" "}
                     <span style={{ color: "#98FF4C", fontWeight: "600" }}>
-                      оставить анкету
+                      зарегистрироваться
                     </span>{" "}
-                    на стажировку и пройти этот путь! 🚀
+                    и пройти этот путь! 🚀
                   </p>
                 </ChatBubble>
                 <ChatBubble delay={400}>
@@ -1144,13 +1273,383 @@ export function QuestApp() {
                       lineHeight: 1.6,
                     }}
                   >
-                    Переходи в{" "}
-                    <span style={{ color: "#C3B7FF", fontWeight: "600" }}>
-                      личный кабинет
+                    Заполни короткую форму, проходи опросы и получай{" "}
+                    <span style={{ color: "#98FF4C", fontWeight: "600" }}>
+                      мерч X5 Tech
                     </span>
-                    , проходи опросы и получай мерч! 🎁
+                    ! 🎁
                   </p>
                 </ChatBubble>
+              </>
+            )}
+          </>
+        )}
+
+        {/* ===== REGISTRATION ===== */}
+        {screen === "registration" && (
+          <>
+            <Avatar />
+            {typing ? (
+              <TypingIndicator />
+            ) : regSuccess ? (
+              <>
+                <ChatBubble>
+                  <p
+                    style={{
+                      margin: 0,
+                      color: "#FAFAFA",
+                      fontSize: "15px",
+                      lineHeight: 1.6,
+                    }}
+                  >
+                    🎉 Отлично,{" "}
+                    <span style={{ color: "#98FF4C", fontWeight: "600" }}>
+                      {telegram}
+                    </span>
+                    ! Ты успешно зарегистрирован!
+                  </p>
+                </ChatBubble>
+                <ChatBubble delay={300}>
+                  <p
+                    style={{
+                      margin: 0,
+                      color: "#FAFAFA",
+                      fontSize: "15px",
+                      lineHeight: 1.6,
+                    }}
+                  >
+                    Теперь переходи в личный кабинет, проходи опросы и забирай
+                    мерч! 🚀
+                  </p>
+                </ChatBubble>
+              </>
+            ) : (
+              <>
+                <ChatBubble>
+                  <p
+                    style={{
+                      margin: 0,
+                      color: "#FAFAFA",
+                      fontSize: "15px",
+                      lineHeight: 1.6,
+                    }}
+                  >
+                    Заполни форму, чтобы мы могли связаться с тобой! 📝
+                  </p>
+                </ChatBubble>
+
+                {/* Форма регистрации */}
+                <div
+                  style={{
+                    marginTop: "16px",
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: "12px",
+                    animation: "fadeIn 0.4s ease 0.3s both",
+                  }}
+                >
+                  {/* Telegram */}
+                  <div>
+                    <label
+                      style={{
+                        display: "block",
+                        color: "rgba(195, 183, 255, 0.7)",
+                        fontSize: "12px",
+                        marginBottom: "6px",
+                        textTransform: "uppercase",
+                        letterSpacing: "1px",
+                      }}
+                    >
+                      Telegram
+                    </label>
+                    <input
+                      type="text"
+                      value={telegram}
+                      onChange={(e) => setTelegram(e.target.value)}
+                      placeholder="@username"
+                      style={{
+                        width: "100%",
+                        padding: "14px 16px",
+                        background: "rgba(61, 54, 84, 0.4)",
+                        border: "1px solid rgba(255, 255, 255, 0.1)",
+                        borderRadius: "12px",
+                        color: "#FAFAFA",
+                        fontSize: "15px",
+                        outline: "none",
+                        boxSizing: "border-box",
+                      }}
+                    />
+                  </div>
+
+                  {/* Password */}
+                  <div>
+                    <label
+                      style={{
+                        display: "block",
+                        color: "rgba(195, 183, 255, 0.7)",
+                        fontSize: "12px",
+                        marginBottom: "6px",
+                        textTransform: "uppercase",
+                        letterSpacing: "1px",
+                      }}
+                    >
+                      Пароль
+                    </label>
+                    <input
+                      type="password"
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      placeholder="Минимум 4 символа"
+                      style={{
+                        width: "100%",
+                        padding: "14px 16px",
+                        background: "rgba(61, 54, 84, 0.4)",
+                        border: "1px solid rgba(255, 255, 255, 0.1)",
+                        borderRadius: "12px",
+                        color: "#FAFAFA",
+                        fontSize: "15px",
+                        outline: "none",
+                        boxSizing: "border-box",
+                      }}
+                    />
+                  </div>
+
+                  {/* University */}
+                  <div>
+                    <label
+                      style={{
+                        display: "block",
+                        color: "rgba(195, 183, 255, 0.7)",
+                        fontSize: "12px",
+                        marginBottom: "6px",
+                        textTransform: "uppercase",
+                        letterSpacing: "1px",
+                      }}
+                    >
+                      ВУЗ
+                    </label>
+                    <input
+                      type="text"
+                      value={university}
+                      onChange={(e) => setUniversity(e.target.value)}
+                      placeholder="Название университета"
+                      style={{
+                        width: "100%",
+                        padding: "14px 16px",
+                        background: "rgba(61, 54, 84, 0.4)",
+                        border: "1px solid rgba(255, 255, 255, 0.1)",
+                        borderRadius: "12px",
+                        color: "#FAFAFA",
+                        fontSize: "15px",
+                        outline: "none",
+                        boxSizing: "border-box",
+                      }}
+                    />
+                  </div>
+
+                  {/* Course */}
+                  <div>
+                    <label
+                      style={{
+                        display: "block",
+                        color: "rgba(195, 183, 255, 0.7)",
+                        fontSize: "12px",
+                        marginBottom: "6px",
+                        textTransform: "uppercase",
+                        letterSpacing: "1px",
+                      }}
+                    >
+                      Курс
+                    </label>
+                    <div style={{ display: "flex", gap: "8px" }}>
+                      {[1, 2, 3, 4, 5, 6].map((c) => (
+                        <button
+                          key={c}
+                          onClick={() => setCourse(c)}
+                          style={{
+                            flex: 1,
+                            padding: "12px",
+                            background:
+                              course === c
+                                ? "linear-gradient(135deg, #98FF4C 0%, #7ACC3D 100%)"
+                                : "rgba(61, 54, 84, 0.4)",
+                            border:
+                              course === c
+                                ? "none"
+                                : "1px solid rgba(255, 255, 255, 0.1)",
+                            borderRadius: "10px",
+                            color: course === c ? "#0D0B14" : "#FAFAFA",
+                            fontSize: "15px",
+                            fontWeight: course === c ? "700" : "500",
+                            cursor: "pointer",
+                          }}
+                        >
+                          {c}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Error message */}
+                  {regError && (
+                    <div
+                      style={{
+                        padding: "12px 16px",
+                        background: "rgba(248, 113, 113, 0.15)",
+                        border: "1px solid rgba(248, 113, 113, 0.3)",
+                        borderRadius: "10px",
+                        color: "#F87171",
+                        fontSize: "14px",
+                      }}
+                    >
+                      {regError}
+                    </div>
+                  )}
+                </div>
+              </>
+            )}
+          </>
+        )}
+
+        {/* ===== LOGIN ===== */}
+        {screen === "login" && (
+          <>
+            <Avatar />
+            {typing ? (
+              <TypingIndicator />
+            ) : (
+              <>
+                <ChatBubble>
+                  <p
+                    style={{
+                      margin: 0,
+                      color: "#FAFAFA",
+                      fontSize: "15px",
+                      lineHeight: 1.6,
+                    }}
+                  >
+                    С возвращением! 👋 Введи свои данные для входа.
+                  </p>
+                </ChatBubble>
+
+                {/* Форма входа */}
+                <div
+                  style={{
+                    marginTop: "16px",
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: "12px",
+                    animation: "fadeIn 0.4s ease 0.3s both",
+                  }}
+                >
+                  {/* Telegram */}
+                  <div>
+                    <label
+                      style={{
+                        display: "block",
+                        color: "rgba(195, 183, 255, 0.7)",
+                        fontSize: "12px",
+                        marginBottom: "6px",
+                        textTransform: "uppercase",
+                        letterSpacing: "1px",
+                      }}
+                    >
+                      Telegram
+                    </label>
+                    <input
+                      type="text"
+                      value={loginTelegram}
+                      onChange={(e) => setLoginTelegram(e.target.value)}
+                      placeholder="@username"
+                      style={{
+                        width: "100%",
+                        padding: "14px 16px",
+                        background: "rgba(61, 54, 84, 0.4)",
+                        border: "1px solid rgba(255, 255, 255, 0.1)",
+                        borderRadius: "12px",
+                        color: "#FAFAFA",
+                        fontSize: "15px",
+                        outline: "none",
+                        boxSizing: "border-box",
+                      }}
+                    />
+                  </div>
+
+                  {/* Password */}
+                  <div>
+                    <label
+                      style={{
+                        display: "block",
+                        color: "rgba(195, 183, 255, 0.7)",
+                        fontSize: "12px",
+                        marginBottom: "6px",
+                        textTransform: "uppercase",
+                        letterSpacing: "1px",
+                      }}
+                    >
+                      Пароль
+                    </label>
+                    <input
+                      type="password"
+                      value={loginPassword}
+                      onChange={(e) => setLoginPassword(e.target.value)}
+                      placeholder="Ваш пароль"
+                      style={{
+                        width: "100%",
+                        padding: "14px 16px",
+                        background: "rgba(61, 54, 84, 0.4)",
+                        border: "1px solid rgba(255, 255, 255, 0.1)",
+                        borderRadius: "12px",
+                        color: "#FAFAFA",
+                        fontSize: "15px",
+                        outline: "none",
+                        boxSizing: "border-box",
+                      }}
+                    />
+                  </div>
+
+                  {/* Error message */}
+                  {loginError && (
+                    <div
+                      style={{
+                        padding: "12px 16px",
+                        background: "rgba(248, 113, 113, 0.15)",
+                        border: "1px solid rgba(248, 113, 113, 0.3)",
+                        borderRadius: "10px",
+                        color: "#F87171",
+                        fontSize: "14px",
+                      }}
+                    >
+                      {loginError}
+                    </div>
+                  )}
+
+                  {/* Link to register */}
+                  <div style={{ textAlign: "center", marginTop: "8px" }}>
+                    <span
+                      style={{
+                        color: "rgba(195, 183, 255, 0.5)",
+                        fontSize: "13px",
+                      }}
+                    >
+                      Нет аккаунта?{" "}
+                    </span>
+                    <button
+                      onClick={() => setScreen("welcome")}
+                      style={{
+                        background: "none",
+                        border: "none",
+                        color: "#98FF4C",
+                        fontSize: "13px",
+                        fontWeight: "600",
+                        cursor: "pointer",
+                        padding: 0,
+                      }}
+                    >
+                      Пройти квест
+                    </button>
+                  </div>
+                </div>
               </>
             )}
           </>
@@ -1234,11 +1733,39 @@ export function QuestApp() {
         )}
 
         {screen === "final" && !typing && (
+          <NeonButton fullWidth onClick={() => setScreen("registration")}>
+            Регистрация →
+          </NeonButton>
+        )}
+
+        {screen === "registration" && !typing && !regSuccess && (
+          <NeonButton
+            fullWidth
+            onClick={handleRegistration}
+            disabled={registerMutation.isPending}
+          >
+            {registerMutation.isPending
+              ? "Регистрация..."
+              : "Зарегистрироваться"}
+          </NeonButton>
+        )}
+
+        {screen === "registration" && !typing && regSuccess && (
           <NeonButton
             fullWidth
             onClick={() => (window.location.href = "/profile")}
           >
             Личный кабинет →
+          </NeonButton>
+        )}
+
+        {screen === "login" && !typing && (
+          <NeonButton
+            fullWidth
+            onClick={handleLogin}
+            disabled={loginMutation.isPending}
+          >
+            {loginMutation.isPending ? "Вход..." : "Войти"}
           </NeonButton>
         )}
 

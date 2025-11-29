@@ -94,6 +94,13 @@ export default function ProfilePage() {
   const { data: surveys } = trpc.survey.getAll.useQuery();
 
   useEffect(() => {
+    // Проверка авторизации
+    const telegram = localStorage.getItem('x5_telegram');
+    if (!telegram) {
+      window.location.href = '/';
+      return;
+    }
+
     // Загрузка профиля из localStorage
     const loadProfile = () => {
       // Всегда берём актуальные направления из x5_directions
@@ -205,21 +212,26 @@ export default function ProfilePage() {
           </div>
         </div>
 
-        <a
-          href="/"
+        <button
+          onClick={() => {
+            localStorage.removeItem('x5_telegram');
+            localStorage.removeItem('x5_directions');
+            localStorage.removeItem('x5_user_profile');
+            window.location.href = '/';
+          }}
           style={{
-            background: 'rgba(195, 183, 255, 0.1)',
-            border: '1px solid rgba(195, 183, 255, 0.2)',
+            background: 'rgba(248, 113, 113, 0.15)',
+            border: '1px solid rgba(248, 113, 113, 0.3)',
             borderRadius: '10px',
             padding: '8px 14px',
-            color: '#C3B7FF',
+            color: '#F87171',
             fontSize: '13px',
             fontWeight: '500',
-            textDecoration: 'none',
+            cursor: 'pointer',
           }}
         >
-          ← Назад
-        </a>
+          Выйти
+        </button>
       </header>
 
       {/* Main */}
