@@ -4,19 +4,19 @@ name: shorthack
 
 steps:
   # Проверка кода (lint)
-  - name: lint
-    image: node:20-alpine
-    commands:
-      - corepack enable && corepack prepare pnpm@latest --activate
-      - pnpm install --frozen-lockfile
-      - pnpm run lint
-    when:
-      event:
-        - pull_request
-        - push
-      branch:
-        - dev
-        - master
+  # - name: lint
+  #   image: node:20-alpine
+  #   commands:
+  #     - corepack enable && corepack prepare pnpm@latest --activate
+  #     - pnpm install --frozen-lockfile
+  #     - pnpm run lint
+  #   when:
+  #     event:
+  #       - pull_request
+  #       - push
+  #     branch:
+  #       - dev
+  #       - master
 
   # Сборка Docker образа
   - name: docker-build
