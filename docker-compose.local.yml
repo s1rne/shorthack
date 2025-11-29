@@ -1,0 +1,41 @@
+version: '3.8'
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        - MONGODB_URI=mongodb://mongo:27017/shorthack
+        - NEXT_PUBLIC_APP_URL=http://localhost:3000
+    container_name: shorthack-app
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      - MONGODB_URI=mongodb://mongo:27017/shorthack
+      - NEXT_PUBLIC_APP_URL=http://localhost:3000
+    depends_on:
+      - mongo
+    networks:
+      - shorthack-local
+
+  mongo:
+    image: mongo:7
+    container_name: shorthack-mongo
+    restart: unless-stopped
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo-data:/data/db
+    networks:
+      - shorthack-local
+
+networks:
+  shorthack-local:
+    driver: bridge
+
+volumes:
+  mongo-data:
+
