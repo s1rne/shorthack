@@ -54,13 +54,10 @@ export const surveyRouter = router({
         }
       });
 
-      // Генерация промокода если прошёл (>= 60%)
+      // Определяем пройден ли опрос (>= 60%)
       const passed = score >= totalPoints * 0.6;
-      const promoCode = passed
-        ? `X5-${Math.random().toString(36).substring(2, 8).toUpperCase()}`
-        : '';
 
-      // Сохранение результата
+      // Сохранение результата (промокоды теперь выдаются через магазин мерча)
       const result = await SurveyResult.create({
         surveyId: input.surveyId,
         visitorId: input.visitorId,
@@ -68,14 +65,12 @@ export const surveyRouter = router({
         totalPoints,
         answers: input.answers,
         passed,
-        promoCode,
       });
 
       return {
         score,
         totalPoints,
         passed,
-        promoCode,
         resultId: result._id.toString(),
       };
     }),

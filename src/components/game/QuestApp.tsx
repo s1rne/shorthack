@@ -417,6 +417,23 @@ export function QuestApp() {
   const [loginPassword, setLoginPassword] = useState("");
   const [loginError, setLoginError] = useState<string | null>(null);
 
+  // Visitor ID для трекинга прохождения сценария
+  const [visitorId] = useState(() => {
+    if (typeof window !== "undefined") {
+      let id = localStorage.getItem("x5_visitor_id");
+      if (!id) {
+        id = `v_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+        localStorage.setItem("x5_visitor_id", id);
+      }
+      return id;
+    }
+    return "";
+  });
+
+  // Трекинг прохождения сценария
+  const trackCompletionMutation = trpc.scenario.trackCompletion.useMutation();
+  const markRegisteredMutation = trpc.scenario.markRegistered.useMutation();
+
   const registerMutation = trpc.player.register.useMutation({
     onSuccess: () => {
       setRegSuccess(true);
@@ -424,6 +441,10 @@ export function QuestApp() {
       // Сохраняем telegram в localStorage
       if (typeof window !== "undefined") {
         localStorage.setItem("x5_telegram", telegram);
+      }
+      // Отмечаем регистрацию в трекинге
+      if (visitorId) {
+        markRegisteredMutation.mutate({ visitorId, telegram });
       }
     },
     onError: (error) => {
@@ -433,13 +454,9 @@ export function QuestApp() {
 
   const loginMutation = trpc.player.login.useMutation({
     onSuccess: (data) => {
-      // Сохраняем данные в localStorage
+      // Сохраняем только telegram для идентификации
       if (typeof window !== "undefined") {
         localStorage.setItem("x5_telegram", data.telegram);
-        localStorage.setItem(
-          "x5_directions",
-          JSON.stringify(data.selectedDirections)
-        );
       }
       // Переходим в профиль
       window.location.href = "/profile";
@@ -1733,7 +1750,16 @@ export function QuestApp() {
         )}
 
         {screen === "final" && !typing && (
-          <NeonButton fullWidth onClick={() => setScreen("registration")}>
+          <NeonButton
+            fullWidth
+            onClick={() => {
+              // Трекаем прохождение сценария
+              if (visitorId) {
+                trackCompletionMutation.mutate({ visitorId });
+              }
+              setScreen("registration");
+            }}
+          >
             Регистрация →
           </NeonButton>
         )}

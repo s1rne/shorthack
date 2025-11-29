@@ -82,29 +82,28 @@ export default function SurveyPage() {
   const params = useParams();
   const surveyId = params.id as string;
 
-  const [visitorId] = useState(() => {
-    if (typeof window !== 'undefined') {
-      let id = localStorage.getItem('x5_visitor_id');
-      if (!id) {
-        id = `visitor_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
-        localStorage.setItem('x5_visitor_id', id);
-      }
-      return id;
-    }
-    return '';
-  });
-
+  const [telegram, setTelegram] = useState<string | null>(null);
   const [currentQ, setCurrentQ] = useState(0);
   const [answers, setAnswers] = useState<number[]>([]);
   const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null);
   const [showResult, setShowResult] = useState(false);
-  const [result, setResult] = useState<{ score: number; totalPoints: number; passed: boolean; promoCode: string } | null>(null);
+  const [result, setResult] = useState<{ score: number; totalPoints: number; passed: boolean } | null>(null);
+
+  // Получаем telegram из localStorage при загрузке
+  useEffect(() => {
+    const storedTelegram = localStorage.getItem('x5_telegram');
+    if (!storedTelegram) {
+      window.location.href = '/';
+      return;
+    }
+    setTelegram(storedTelegram);
+  }, []);
 
   const { data: survey, isLoading, error } = trpc.survey.getById.useQuery({ id: surveyId });
   const submitMutation = trpc.survey.submit.useMutation();
 
   const handleAnswer = (idx: number) => {
-    if (selectedAnswer !== null) return;
+    if (selectedAnswer !== null || !telegram) return;
     setSelectedAnswer(idx);
 
     const newAnswers = [...answers, idx];
@@ -115,60 +114,14 @@ export default function SurveyPage() {
         setCurrentQ((q) => q + 1);
         setSelectedAnswer(null);
       } else {
-        // Отправка результата
+        // Отправка результата с telegram как visitorId
         submitMutation.mutate(
-          { surveyId, visitorId, answers: newAnswers },
+          { surveyId, visitorId: telegram, answers: newAnswers },
           {
             onSuccess: (data) => {
               setResult(data);
               setShowResult(true);
-              
-              // Сохраняем в localStorage профиля
-              if (typeof window !== 'undefined' && survey) {
-                const stored = localStorage.getItem('x5_user_profile');
-                let profile;
-                if (stored) {
-                  profile = JSON.parse(stored);
-                  // Миграция старого формата
-                  if (profile.selectedDirection && !profile.selectedDirections) {
-                    profile.selectedDirections = [profile.selectedDirection];
-                    delete profile.selectedDirection;
-                  }
-                } else {
-                  // Создаём новый профиль
-                  const storedDirections = localStorage.getItem('x5_directions');
-                  let selectedDirections: string[] = [];
-                  if (storedDirections) {
-                    try {
-                      selectedDirections = JSON.parse(storedDirections);
-                    } catch {
-                      selectedDirections = [];
-                    }
-                  }
-                  profile = {
-                    visitorId,
-                    totalPoints: 0,
-                    completedSurveys: [],
-                    selectedDirections,
-                  };
-                }
-                
-                // Добавляем результат
-                profile.completedSurveys.push({
-                  surveyId,
-                  surveyTitle: survey.title,
-                  score: data.score,
-                  totalPoints: data.totalPoints,
-                  passed: data.passed,
-                  promoCode: data.promoCode,
-                  completedAt: new Date().toISOString(),
-                });
-                
-                // Обновляем общие баллы
-                profile.totalPoints += data.score;
-                
-                localStorage.setItem('x5_user_profile', JSON.stringify(profile));
-              }
+              // Данные сохраняются в БД автоматически через tRPC
             },
           }
         );
@@ -491,11 +444,11 @@ export default function SurveyPage() {
 
               <p style={{ color: 'rgba(255,255,255,0.5)', fontSize: '15px', marginBottom: '24px' }}>
                 {result?.passed
-                  ? 'Покажи промокод на стенде и получи мерч!'
-                  : 'Нужно набрать минимум 60% для получения мерча'}
+                  ? 'Баллы начислены! Обменяй их на мерч в личном кабинете.'
+                  : 'Нужно набрать минимум 60% для прохождения'}
               </p>
 
-              {result?.passed && result.promoCode && (
+              {result?.passed && (
                 <div
                   style={{
                     background: 'linear-gradient(135deg, rgba(152, 255, 76, 0.1), rgba(152, 255, 76, 0.02))',
@@ -503,6 +456,7 @@ export default function SurveyPage() {
                     borderRadius: '20px',
                     padding: '28px',
                     marginBottom: '24px',
+                    textAlign: 'center',
                   }}
                 >
                   <div
@@ -515,19 +469,17 @@ export default function SurveyPage() {
                       fontWeight: '600',
                     }}
                   >
-                    Твой промокод
+                    Получено баллов
                   </div>
                   <div
                     style={{
-                      fontSize: '32px',
+                      fontSize: '48px',
                       fontWeight: '800',
                       color: '#98FF4C',
-                      letterSpacing: '4px',
-                      fontFamily: 'ui-monospace, monospace',
                       textShadow: '0 0 30px rgba(152, 255, 76, 0.5)',
                     }}
                   >
-                    {result.promoCode}
+                    +{result.score}
                   </div>
                 </div>
               )}
