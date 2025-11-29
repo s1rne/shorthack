@@ -60,7 +60,17 @@ function Background3D() {
 }
 
 // ========== ТИПЫ ==========
-type Screen = 'welcome' | 'directions' | 'website' | 'interview' | 'projects' | 'benefits' | 'surveys';
+type Screen =
+  | 'welcome'
+  | 'directions'
+  | 'website'
+  | 'interview'
+  | 'projects'
+  | 'benefits'
+  | 'testTask'
+  | 'techInterview'
+  | 'final'
+  | 'surveys';
 
 const directions = [
   { id: 'testing', label: 'Тестирование', icon: '🧪' },
@@ -288,23 +298,23 @@ export function QuestApp() {
           </div>
         </div>
 
-        {screen === 'surveys' && (
-          <button
-            onClick={handleRestart}
-            style={{
-              background: 'rgba(195, 183, 255, 0.1)',
-              border: '1px solid rgba(195, 183, 255, 0.2)',
-              borderRadius: '10px',
-              padding: '8px 14px',
-              color: '#C3B7FF',
-              fontSize: '13px',
-              fontWeight: '500',
-              cursor: 'pointer',
-            }}
-          >
-            ← Начало
-          </button>
-        )}
+        <button
+          onClick={handleRestart}
+          style={{
+            background: 'rgba(195, 183, 255, 0.1)',
+            border: '1px solid rgba(195, 183, 255, 0.2)',
+            borderRadius: '10px',
+            padding: '8px 14px',
+            color: '#C3B7FF',
+            fontSize: '13px',
+            fontWeight: '500',
+            cursor: 'pointer',
+            opacity: screen === 'welcome' ? 0 : 1,
+            pointerEvents: screen === 'welcome' ? 'none' : 'auto',
+          }}
+        >
+          ← Начало
+        </button>
       </header>
 
       {/* Main */}
@@ -514,6 +524,52 @@ export function QuestApp() {
           </>
         )}
 
+        {/* ===== TEST TASK ===== */}
+        {screen === 'testTask' && (
+          <>
+            <Avatar />
+            {typing ? (
+              <TypingIndicator />
+            ) : (
+              <>
+                <ChatBubble>
+                  <p style={{ margin: 0, color: '#FAFAFA', fontSize: '15px', lineHeight: 1.6 }}>
+                    А после HR-интервью тебя ждёт <span style={{ color: '#98FF4C', fontWeight: '600' }}>тестовое задание</span>. 📋
+                  </p>
+                </ChatBubble>
+                <ChatBubble delay={400}>
+                  <p style={{ margin: 0, color: '#FAFAFA', fontSize: '15px', lineHeight: 1.6 }}>
+                    Оно может отличаться в зависимости от команды и направления.
+                  </p>
+                </ChatBubble>
+              </>
+            )}
+          </>
+        )}
+
+        {/* ===== TECH INTERVIEW ===== */}
+        {screen === 'techInterview' && (
+          <>
+            <Avatar />
+            {typing ? (
+              <TypingIndicator />
+            ) : (
+              <>
+                <ChatBubble>
+                  <p style={{ margin: 0, color: '#FAFAFA', fontSize: '15px', lineHeight: 1.6 }}>
+                    Последняя часть — <span style={{ color: '#C3B7FF', fontWeight: '600' }}>техническое интервью</span>. После него ты попадёшь в команду! 🎉
+                  </p>
+                </ChatBubble>
+                <ChatBubble delay={400}>
+                  <p style={{ margin: 0, color: '#FAFAFA', fontSize: '15px', lineHeight: 1.6 }}>
+                    Тебя встретит ментор, расскажет подробнее о компании и том, чем тебе предстоит заниматься.
+                  </p>
+                </ChatBubble>
+              </>
+            )}
+          </>
+        )}
+
         {/* ===== PROJECTS ===== */}
         {screen === 'projects' && (
           <>
@@ -560,7 +616,30 @@ export function QuestApp() {
           </>
         )}
 
-        {/* ===== SURVEYS (Опросы) ===== */}
+        {/* ===== FINAL ===== */}
+        {screen === 'final' && (
+          <>
+            <Avatar />
+            {typing ? (
+              <TypingIndicator />
+            ) : (
+              <>
+                <ChatBubble>
+                  <p style={{ margin: 0, color: '#FAFAFA', fontSize: '15px', lineHeight: 1.6 }}>
+                    Теперь предлагаю тебе <span style={{ color: '#98FF4C', fontWeight: '600' }}>оставить анкету</span> на стажировку и пройти этот путь! 🚀
+                  </p>
+                </ChatBubble>
+                <ChatBubble delay={400}>
+                  <p style={{ margin: 0, color: '#FAFAFA', fontSize: '15px', lineHeight: 1.6 }}>
+                    Или <span style={{ color: '#C3B7FF', fontWeight: '600' }}>пройди опросы</span> и получи мерч! 🎁
+                  </p>
+                </ChatBubble>
+              </>
+            )}
+          </>
+        )}
+
+        {/* ===== SURVEYS ===== */}
         {screen === 'surveys' && (
           <>
             <Avatar />
@@ -570,22 +649,12 @@ export function QuestApp() {
               <>
                 <ChatBubble>
                   <p style={{ margin: 0, color: '#FAFAFA', fontSize: '15px', lineHeight: 1.6 }}>
-                    Ждём тебя в команде <span style={{ color: '#98FF4C', fontWeight: '600' }}>X5 Tech</span>! 🎉
-                  </p>
-                </ChatBubble>
-                <ChatBubble delay={300}>
-                  <p style={{ margin: 0, color: '#FAFAFA', fontSize: '15px', lineHeight: 1.6 }}>
-                    А теперь пройди опросы и получи <span style={{ color: '#98FF4C', fontWeight: '700' }}>мерч</span>! 🎁
+                    Пройди опросы и получи <span style={{ color: '#98FF4C', fontWeight: '700' }}>мерч X5 Tech</span>! 🎁
                   </p>
                 </ChatBubble>
 
                 {/* Surveys section */}
-                <div
-                  style={{
-                    marginTop: '16px',
-                    animation: 'fadeIn 0.4s ease 0.5s both',
-                  }}
-                >
+                <div style={{ marginTop: '16px', animation: 'fadeIn 0.4s ease 0.3s both' }}>
                   <div
                     style={{
                       fontSize: '12px',
@@ -605,13 +674,16 @@ export function QuestApp() {
                       background: 'rgba(61, 54, 84, 0.3)',
                       border: '1px solid rgba(255, 255, 255, 0.08)',
                       borderRadius: '16px',
-                      padding: '20px',
+                      padding: '24px',
                       textAlign: 'center',
                     }}
                   >
-                    <div style={{ fontSize: '32px', marginBottom: '12px' }}>📋</div>
-                    <div style={{ color: 'rgba(255,255,255,0.5)', fontSize: '14px' }}>
+                    <div style={{ fontSize: '36px', marginBottom: '12px' }}>📋</div>
+                    <div style={{ color: 'rgba(255,255,255,0.6)', fontSize: '14px', marginBottom: '4px' }}>
                       Опросы скоро появятся
+                    </div>
+                    <div style={{ color: 'rgba(255,255,255,0.4)', fontSize: '12px' }}>
+                      Следи за обновлениями
                     </div>
                   </div>
                 </div>
@@ -638,12 +710,6 @@ export function QuestApp() {
           </NeonButton>
         )}
 
-        {screen === 'directions' && !typing && selectedDirection && (
-          <NeonButton fullWidth onClick={() => setScreen('website')}>
-            Далее →
-          </NeonButton>
-        )}
-
         {screen === 'website' && !typing && (
           <div style={{ display: 'flex', gap: '10px' }}>
             <NeonButton variant="secondary" onClick={() => window.open('https://techcrew.start.x5.ru/', '_blank')}>
@@ -656,6 +722,18 @@ export function QuestApp() {
         )}
 
         {screen === 'interview' && !typing && (
+          <NeonButton fullWidth onClick={() => setScreen('testTask')}>
+            Далее →
+          </NeonButton>
+        )}
+
+        {screen === 'testTask' && !typing && (
+          <NeonButton fullWidth onClick={() => setScreen('techInterview')}>
+            Далее →
+          </NeonButton>
+        )}
+
+        {screen === 'techInterview' && !typing && (
           <NeonButton fullWidth onClick={() => setScreen('projects')}>
             Далее →
           </NeonButton>
@@ -668,9 +746,20 @@ export function QuestApp() {
         )}
 
         {screen === 'benefits' && !typing && (
-          <NeonButton fullWidth onClick={() => setScreen('surveys')}>
-            К опросам 🎁
+          <NeonButton fullWidth onClick={() => setScreen('final')}>
+            Далее →
           </NeonButton>
+        )}
+
+        {screen === 'final' && !typing && (
+          <div style={{ display: 'flex', gap: '10px' }}>
+            <NeonButton variant="secondary" onClick={() => window.open('https://techcrew.start.x5.ru/', '_blank')}>
+              📝 Анкета
+            </NeonButton>
+            <NeonButton fullWidth onClick={() => setScreen('surveys')}>
+              🎁 Опросы
+            </NeonButton>
+          </div>
         )}
 
         {screen === 'surveys' && !typing && (
