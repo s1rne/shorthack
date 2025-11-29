@@ -6,7 +6,7 @@ services:
       context: .
       dockerfile: Dockerfile
       args:
-        - MONGODB_URI=${MONGODB_URI}
+        - MONGODB_URI=mongodb://mongo:27017/shorthack
         - NEXT_PUBLIC_APP_URL=${NEXT_PUBLIC_APP_URL}
     container_name: shorthack-app
     restart: unless-stopped
@@ -14,11 +14,25 @@ services:
       - "9011:3000"
     environment:
       - NODE_ENV=production
-      - MONGODB_URI=${MONGODB_URI}
+      - MONGODB_URI=mongodb://mongo:27017/shorthack
       - NEXT_PUBLIC_APP_URL=${NEXT_PUBLIC_APP_URL}
+    depends_on:
+      - mongo
+    networks:
+      - shorthack-network
+
+  mongo:
+    image: mongo:7
+    container_name: shorthack-mongo
+    restart: unless-stopped
+    volumes:
+      - mongo-data:/data/db
     networks:
       - shorthack-network
 
 networks:
   shorthack-network:
     driver: bridge
+
+volumes:
+  mongo-data:
