@@ -4,6 +4,7 @@ import { useState, useEffect, useRef } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
 import { Suspense } from 'react';
 import * as THREE from 'three';
+import { trpc } from '@/lib/trpc/client';
 
 // ========== 3D ДЕКОРАТИВНЫЙ ФОН ==========
 function FloatingShapes() {
@@ -213,6 +214,124 @@ function NeonButton({
   );
 }
 
+// Секция с опросами
+function SurveysSection({ typing }: { typing: boolean }) {
+  const { data: surveys, isLoading } = trpc.survey.getAll.useQuery();
+
+  return (
+    <>
+      <Avatar />
+      {typing ? (
+        <TypingIndicator />
+      ) : (
+        <>
+          <ChatBubble>
+            <p style={{ margin: 0, color: '#FAFAFA', fontSize: '15px', lineHeight: 1.6 }}>
+              Пройди опросы и получи <span style={{ color: '#98FF4C', fontWeight: '700' }}>мерч X5 Tech</span>! 🎁
+            </p>
+          </ChatBubble>
+
+          <div style={{ marginTop: '16px', animation: 'fadeIn 0.4s ease 0.3s both' }}>
+            <div
+              style={{
+                fontSize: '12px',
+                color: 'rgba(195, 183, 255, 0.5)',
+                textTransform: 'uppercase',
+                letterSpacing: '1.5px',
+                marginBottom: '12px',
+                fontWeight: '600',
+              }}
+            >
+              Доступные опросы
+            </div>
+
+            {isLoading ? (
+              <div style={{ textAlign: 'center', padding: '24px' }}>
+                <div
+                  style={{
+                    width: '32px',
+                    height: '32px',
+                    border: '2px solid rgba(152, 255, 76, 0.2)',
+                    borderTopColor: '#98FF4C',
+                    borderRadius: '50%',
+                    margin: '0 auto',
+                    animation: 'spin 1s linear infinite',
+                  }}
+                />
+              </div>
+            ) : surveys && surveys.length > 0 ? (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                {surveys.map((survey) => (
+                  <a
+                    key={survey._id.toString()}
+                    href={`/game/survey/${survey._id.toString()}`}
+                    style={{
+                      background: 'rgba(61, 54, 84, 0.3)',
+                      border: '1px solid rgba(152, 255, 76, 0.2)',
+                      borderRadius: '16px',
+                      padding: '16px 20px',
+                      textDecoration: 'none',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '14px',
+                      transition: 'all 0.2s',
+                    }}
+                  >
+                    <div
+                      style={{
+                        width: '44px',
+                        height: '44px',
+                        borderRadius: '12px',
+                        background: 'linear-gradient(135deg, rgba(152, 255, 76, 0.2), rgba(152, 255, 76, 0.05))',
+                        border: '1px solid rgba(152, 255, 76, 0.3)',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        fontSize: '20px',
+                        flexShrink: 0,
+                      }}
+                    >
+                      📋
+                    </div>
+                    <div style={{ flex: 1, minWidth: 0 }}>
+                      <div style={{ color: '#FAFAFA', fontSize: '15px', fontWeight: '600', marginBottom: '4px' }}>
+                        {survey.title}
+                      </div>
+                      <div style={{ color: 'rgba(195, 183, 255, 0.6)', fontSize: '13px' }}>
+                        {survey.questions.length} вопросов
+                      </div>
+                    </div>
+                    <div style={{ color: '#98FF4C', fontSize: '18px' }}>→</div>
+                  </a>
+                ))}
+              </div>
+            ) : (
+              <div
+                style={{
+                  background: 'rgba(61, 54, 84, 0.3)',
+                  border: '1px solid rgba(255, 255, 255, 0.08)',
+                  borderRadius: '16px',
+                  padding: '24px',
+                  textAlign: 'center',
+                }}
+              >
+                <div style={{ fontSize: '36px', marginBottom: '12px' }}>📋</div>
+                <div style={{ color: 'rgba(255,255,255,0.6)', fontSize: '14px', marginBottom: '4px' }}>
+                  Опросы скоро появятся
+                </div>
+                <div style={{ color: 'rgba(255,255,255,0.4)', fontSize: '12px' }}>
+                  Следи за обновлениями
+                </div>
+              </div>
+            )}
+          </div>
+        </>
+      )}
+      <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
+    </>
+  );
+}
+
 // ========== ГЛАВНОЕ ==========
 export function QuestApp() {
   const [screen, setScreen] = useState<Screen>('welcome');
@@ -227,6 +346,10 @@ export function QuestApp() {
 
   const handleDirection = (id: string) => {
     setSelectedDirection(id);
+    // Сохраняем выбор в localStorage
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('x5_direction', id);
+    }
     setTimeout(() => setScreen('website'), 600);
   };
 
@@ -631,7 +754,7 @@ export function QuestApp() {
                 </ChatBubble>
                 <ChatBubble delay={400}>
                   <p style={{ margin: 0, color: '#FAFAFA', fontSize: '15px', lineHeight: 1.6 }}>
-                    Или <span style={{ color: '#C3B7FF', fontWeight: '600' }}>пройди опросы</span> и получи мерч! 🎁
+                    Переходи в <span style={{ color: '#C3B7FF', fontWeight: '600' }}>личный кабинет</span>, проходи опросы и получай мерч! 🎁
                   </p>
                 </ChatBubble>
               </>
@@ -640,57 +763,7 @@ export function QuestApp() {
         )}
 
         {/* ===== SURVEYS ===== */}
-        {screen === 'surveys' && (
-          <>
-            <Avatar />
-            {typing ? (
-              <TypingIndicator />
-            ) : (
-              <>
-                <ChatBubble>
-                  <p style={{ margin: 0, color: '#FAFAFA', fontSize: '15px', lineHeight: 1.6 }}>
-                    Пройди опросы и получи <span style={{ color: '#98FF4C', fontWeight: '700' }}>мерч X5 Tech</span>! 🎁
-                  </p>
-                </ChatBubble>
-
-                {/* Surveys section */}
-                <div style={{ marginTop: '16px', animation: 'fadeIn 0.4s ease 0.3s both' }}>
-                  <div
-                    style={{
-                      fontSize: '12px',
-                      color: 'rgba(195, 183, 255, 0.5)',
-                      textTransform: 'uppercase',
-                      letterSpacing: '1.5px',
-                      marginBottom: '12px',
-                      fontWeight: '600',
-                    }}
-                  >
-                    Доступные опросы
-                  </div>
-
-                  {/* Placeholder for surveys from admin */}
-                  <div
-                    style={{
-                      background: 'rgba(61, 54, 84, 0.3)',
-                      border: '1px solid rgba(255, 255, 255, 0.08)',
-                      borderRadius: '16px',
-                      padding: '24px',
-                      textAlign: 'center',
-                    }}
-                  >
-                    <div style={{ fontSize: '36px', marginBottom: '12px' }}>📋</div>
-                    <div style={{ color: 'rgba(255,255,255,0.6)', fontSize: '14px', marginBottom: '4px' }}>
-                      Опросы скоро появятся
-                    </div>
-                    <div style={{ color: 'rgba(255,255,255,0.4)', fontSize: '12px' }}>
-                      Следи за обновлениями
-                    </div>
-                  </div>
-                </div>
-              </>
-            )}
-          </>
-        )}
+        {screen === 'surveys' && <SurveysSection typing={typing} />}
       </main>
 
       {/* Footer */}
@@ -752,14 +825,9 @@ export function QuestApp() {
         )}
 
         {screen === 'final' && !typing && (
-          <div style={{ display: 'flex', gap: '10px' }}>
-            <NeonButton variant="secondary" onClick={() => window.open('https://techcrew.start.x5.ru/', '_blank')}>
-              📝 Анкета
-            </NeonButton>
-            <NeonButton fullWidth onClick={() => setScreen('surveys')}>
-              🎁 Опросы
-            </NeonButton>
-          </div>
+          <NeonButton fullWidth onClick={() => window.location.href = '/game/profile'}>
+            Личный кабинет →
+          </NeonButton>
         )}
 
         {screen === 'surveys' && !typing && (
